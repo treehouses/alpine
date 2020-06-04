@@ -14,7 +14,7 @@ script:
 - balena_rpi_sha=$(get_tag_sha "balenalib/raspberry-pi-alpine" "latest" )
 - treehouses_rpi_sha=$(get_treehouses_rpi_sha "treehouses/alpine" "arm")
 - flag=$(compare_sha  "$alpine_x86_sha" "treehouses_alpine_x86_sha" "balena_rpi_sha" "treehouses_rpi_sha")
-- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+#- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 before_deploy:
 - tag="3.12-$(date +%Y%m%d%H%M)"
 - echo $tag
