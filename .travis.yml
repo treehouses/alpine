@@ -10,10 +10,15 @@ script:
 - export DOCKER_CLI_EXPERIMENTAL=enabled
 - source sha_function.sh
 - alpine_x86_sha=$(get_manifest_sha  "alpine" "latest" "amd64")
+- echo $alpine_x86_sha
 - treehouses_alpine_x86_sha=$(get_manifest_sha  "treehouses/alpine" "latest" "amd64")
+- echo $treehouses_alpine_x86_sha
 - balena_rpi_sha=$(get_tag_sha "balenalib/raspberry-pi-alpine" "latest" )
+- echo $balena_rpi_sha
 - treehouses_rpi_sha=$(get_treehouses_rpi_sha "treehouses/alpine" "arm")
+- echo $treehouses_rpi_sha
 - flag=$(compare_sha  "$alpine_x86_sha" "treehouses_alpine_x86_sha" "balena_rpi_sha" "treehouses_rpi_sha")
+- echo $flag
 #- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 - echo "1f0c6d77-506a-4ba2-979d-1e7e1ed6a842" | docker login -u "sevenseas" --password-stdin
 before_deploy:
