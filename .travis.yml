@@ -26,6 +26,7 @@ before_deploy:
 deploy:
 - provider: script
   script: docker manifest push treehouses/alpine:latest; docker manifest push treehouses/alpine:$tag
+  skip_cleanup: true
   on:
     all_branches: true
     condition: "$flag"

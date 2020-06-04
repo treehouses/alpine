@@ -1,6 +1,6 @@
 #!/bin/bash
 
-get_manifest_sha(){
+get_variant_sha(){
     local sha
     docker_repo=$1  #alpine or vmnet/alpine
     manifest_tag=$2
@@ -31,7 +31,7 @@ get_manifest_sha(){
     done < "$2".txt
 }
 
-get_treehouses_rpi_sha (){
+get_manifest_sha (){
     local repo=$1
     local arch=$2
     docker pull -q $1 &>/dev/null
