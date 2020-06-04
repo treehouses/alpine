@@ -17,15 +17,14 @@ script:
 - echo $balena_rpi_sha
 - treehouses_rpi_sha=$(get_treehouses_rpi_sha "treehouses/alpine" "arm")
 - echo $treehouses_rpi_sha
-- flag=$(compare_sha  "$alpine_x86_sha" "treehouses_alpine_x86_sha" "balena_rpi_sha" "treehouses_rpi_sha")
+- flag=$(compare_sha  "$alpine_x86_sha" "treehouses_alpine_x86_sha" "balena_rpi_sha"
+  "treehouses_rpi_sha")
 - echo $flag
-#- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-- echo "1f0c6d77-506a-4ba2-979d-1e7e1ed6a842" | docker login -u "sevenseas" --password-stdin
+- echo $DOCKERAPIKEY | docker login -u "sevenseas" --password-stdin
 before_deploy:
 - tag="3.12-$(date +%Y%m%d%H%M)"
 - echo $tag
 - create_manifests treehouses/alpine $tag  "alpine@"$alpine_x86_sha "balenalib/raspberry-pi-alpine@"$balena_rpi_sha
-#- create_manifests vmnet8/alpine 3.12-$(date +%Y%m%d%H%M) "alpine@"$alpine_x86_sha "balenalib/raspberry-pi-alpine@"$balena_rpi_sha
 - docker manifest inspect treehouses/alpine:latest
 - docker manifest inspect treehouses/alpine:$tag
 deploy:
@@ -33,7 +32,7 @@ deploy:
   script: docker manifest push treehouses/alpine:latest; docker manifest push treehouses/alpine:$tag
   on:
     all_branches: true
-    condition: $flag
+    condition: "$flag"
 env:
   global:
-  - secure: R+mSAK87xrYZCtiPbtu2WyiKV900lTnIErn2QtQz2DDz6ed0+dROeQ+yjANiaRgUsclAEsK2cq6E+3IkjOTukZchmth1H4J5MIkRu5a6zb8ZwxBPvjJgcLHYMBiMLp6u8FyyKNPYM86Qc7H/jCc4F0bb/unZGikiHwzdyEMd0wxXs5g/DnUtQanqKKw20yhM8HpzdyYNhR1fx7jwvCuRspmRovTjSqP/zm0S9/RzAl9BpjaI4s9MLX2fSMzELtnZ0nGo1AL6Qc0lFKhaMNdAQ/mhyjgj083cq7PAp4xYZg4QClXoCOAEgaKzb9mkiAE741+5LV79a1dHyxo3z5/Qry/ZlUrOIJ8IIZ8nU3h6zA9A0nJbYW2u1/2dLlf2pIphM+TUE3MTuE5hvEZd4mTLl7Cf9NDKVA3aI4v6zGD57AjM+Zi3+lGU85cOGBQO8kYjR1VRfVQX1OKQKbpCKj+h5d86xEdWlshY4cZb0MK1Xy1zJgTwqX6AEOQJ3N8J3c4DBYNTN4pP9rdaN7h/q+47kldsdYJlSK72IqedVPOloGpzBo3n67BlIkSYG47UMJgzDxgPjK/lzosMWLjBFGUxgkPXswPulFWEWR0+qK5663k/6Wv3/mke4X7hWtXMM9zH0xFvqxSr8fakMiRySml14pgbEKsz4vDF2C7XaALBJjc=
+  - secure: gOiZ4dJungOLStbEeqFcOJsFzsOimOTj+ZPQdeKNcY23RFcO1fnlPedLI/uokvS32ZsahPa52k2g+aAp4/0MyoFS9Tlf95SYZ+ay2rT/0tAujdWIv63SGlgEhCj7MdQ0CgSss3bQsVKOK6pApzAu9aMDoqmcpYeewzS2/ACRK587rCzt3/rtNDI6vspFOZGlW/RUKBEXC4tdqkB4HC+CGw4MI2G0CV1OJ773ZevLZPRNXqWTQeAhPa/TdEyFkF4ebXNVzqORY+egJ69GN/8w2QTMnlF9soXnKtGUquw0OiyfaJMbxeMQLN0LTi7LjbyjEXRGkU+zyMjnzAZ3JviMQJYjiAOyRAZu/Y4KfG4XiodVgaIg+lB2IDGmDm2WkoGG19iiyhJqDjCUPMTxcZ+0KcFdJ+/dAlJszWHThEWflkd0WR2CSFXghAHGGCsQwQ3fLsKkfFKyNTU1uV+YJySmx2Hk+20HbMxDMsHDpSU0mWdAQB/ZniDdceUR9uDJNBAagy10TGXUzfylVlv+1C+z7KzcvpYuHSlk+150MYDVr5+2nCw+2RJQJrHeVTJeyrD74QXWtxUdcOTjghnr3u20qzVlD+pLpBDQcRqEXOwAyGo2O12uZEt8ZzasPlDTp8eFho/vbCdOQ8UjCSWYnTtiyVO15+zOIQOQ4ZkH5NLVbw0=
