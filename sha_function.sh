@@ -132,7 +132,7 @@ compare_balena() {
 #compare_sha $1 $2 $3 $4
 #compare_alpine $@
 #compare_balena $@
-#get_manifest_sha "vmnet8/alpine:$manifest_tag" "$arch"
+#get_manifest_sha 
 #get_manifest_sha $@
 #get_vmnet_sha $1 $2
 #get_tag_sha $1 $2
