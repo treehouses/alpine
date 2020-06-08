@@ -9,9 +9,9 @@ services:
 script:
 - export DOCKER_CLI_EXPERIMENTAL=enabled
 - source sha_function.sh
-- alpine_x86_sha=$(get_variant_sha  "alpine" "latest" "amd64")
+- alpine_x86_sha=$(get_variant_sha "alpine" "latest" "amd64")
 - echo $alpine_x86_sha
-- treehouses_alpine_x86_sha=$(get_manifest_sha  "treehouses/alpine" "amd64")
+- treehouses_alpine_x86_sha=$(get_manifest_sha "treehouses/alpine" "amd64")
 - echo $treehouses_alpine_x86_sha
 - balena_rpi_sha=$(get_tag_sha "balenalib/raspberry-pi-alpine" "latest")
 - echo $balena_rpi_sha
