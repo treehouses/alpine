@@ -18,6 +18,7 @@ script:
 - treehouses_rpi_sha=$(get_manifest_sha "treehouses/alpine" "arm")
 - echo $treehouses_rpi_sha
 - flag=$(compare_sha  "$alpine_x86_sha" "$treehouses_alpine_x86_sha" "$balena_rpi_sha" "$treehouses_rpi_sha")
+- flag=false
 - echo $flag
 - echo $DOCKERAPIKEY | docker login -u "sevenseas" --password-stdin
 before_deploy:
