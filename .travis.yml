@@ -32,7 +32,8 @@ deploy:
   skip_cleanup: true
   on:
     all_branches: true
-    condition: "$flag" = true
+    condition: true
+    #condition: "$flag" = true
 env:
   global:
   - secure: Iid8IKUIovPZidyY5YJb6fdf1pczXbJ09BQpGsLMj0+94QZwbFtXrPX3lb2QznXDAwhJ8VTRUXs2/vP2N/RxYzkNhGGsRNzvJ9kNPSjgAFMW5rUQroeAs+qcVVwe609BRjU7OAoZUgkxMXpmSF1nmuB/bgXoR2EaoeJER0Dc/At6AUqPRYGNOOccOun+aNhpKI6IDjLp0J8DFp+NQ0ZfkarpmjpmvtrZJfVQIwoNT4lSBuOqrZah2ynvXewYahawk/ksmahsiZiD9Sv4jVqIjjgfZNQmV6OtuzqoojWvQYaDLglRkGIPdFnK5j2q0oPtup4shkwFNhtvCirallTkEmRKWfdzOMN9W0Qqe1gmO7PHVNcNjJJT89oyhuJ5+Xpk5+NyyiwCX07HHfzpumOghWBzauqnZjQBIFCve/TlD2Jx4k1T8/uzVt+PLwgrPbMxrk4+hw1zrDgY0V1gOLGWdTSh5KV1gxNIfUYIVCwaMETjcG5uFqOJ7jy3w8NvHq2GDdQUTk9lZiDXSe2K3SLRzumlG15a0qPwx/WRxoD18IQ7WBZdzlwWZLd34k3Ijh3b+lE5grotK/B8ccWxFuMbTvr/dC4IPN7Jis4Rr9PxmBhSG2MRMhL+GDWBNrX67YfNnVDquWEFXLDeLiRAUhuH58Lrh49TPwwevkjfH1PJz4w=
