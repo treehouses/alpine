@@ -59,7 +59,7 @@ get_tag_sha(){
 }
 
 compare_sha () {
-    if [ "$1" != "$2" ] || [ "$3" != "$4" ]; then
+    if [ "$1" != "$2" ] || [ "$3" != "$4" ] || [ "$5" != "$6" ]; then
         echo "true"
     else
         echo "false"
@@ -71,8 +71,11 @@ create_manifests(){
     local tag=$2
     local x86=$3
     local rpi=$4
-    docker manifest create $repo:$tag $x86 $rpi
-    docker manifest create $repo:latest $x86 $rpi
+    local arm64=$5
+    docker manifest create $repo:$tag $x86 $rpi $arm64
+    docker manifest create $repo:latest $x86 $rpi $arm64
     docker manifest annotate $repo:latest $rpi --arch arm
+    docker manifest annotate $repo:$tag $arm64 --arch arm64
+    docker manifest annotate $repo:latest $arm64 --arch arm64
     docker manifest annotate $repo:$tag $rpi --arch arm
 }

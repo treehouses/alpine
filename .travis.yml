@@ -17,13 +17,17 @@ script:
 - echo $balena_rpi_sha
 - treehouses_rpi_sha=$(get_manifest_sha "treehouses/alpine" "arm")
 - echo $treehouses_rpi_sha
-- flag=$(compare_sha  "$alpine_x86_sha" "$treehouses_alpine_x86_sha" "$balena_rpi_sha" "$treehouses_rpi_sha")
+- alpine_arm64_sha=$(get_variant_sha "alpine" "latest" "arm64")
+- echo $alpine_arm64_sha
+- treehouses_alpine_arm64_sha=$(get_manifest_sha "treehouses/alpine" "arm64")
+- echo $treehouses_alpine_arm64_sha
+- flag=$(compare_sha  "$alpine_x86_sha" "$treehouses_alpine_x86_sha" "$balena_rpi_sha" "$treehouses_rpi_sha" "$alpine_arm64_sha" "$treehouses_alpine_arm64_sha")
 - echo $flag
 - echo $DOCKERAPIKEY | docker login -u "sevenseas" --password-stdin
 before_deploy:
 - tag="3.12-$(date +%Y%m%d%H%M)"
 - echo $tag
-- create_manifests treehouses/alpine $tag  "alpine@"$alpine_x86_sha "balenalib/raspberry-pi-alpine@"$balena_rpi_sha
+- create_manifests treehouses/alpine $tag  "alpine@"$alpine_x86_sha "balenalib/raspberry-pi-alpine@"$balena_rpi_sha "alpine@"$alpine_arm64_sha
 - docker manifest inspect treehouses/alpine:latest
 - docker manifest inspect treehouses/alpine:$tag
 deploy:
