@@ -1,13 +1,15 @@
 name: alpine-docker-image-build
 
-#on:
-#  workflow_dispatch:
-#    inputs:
+on:
+  workflow_dispatch:
+    inputs:
 
 #on: push
-on:
-  schedule:
-    - cron: '0 8 * * *'
+
+#on:
+#  schedule:
+#    - cron: '0 8 * * *'
+
 jobs:
   alpine-docker-image-build:
     # Set the type of machine to run on
