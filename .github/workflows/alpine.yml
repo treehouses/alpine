@@ -29,8 +29,10 @@ jobs:
           export DOCKER_CLI_EXPERIMENTAL=enabled
           repo="neethumohan1212/alpine"
           source sha_function.sh
+          echo "test1"
           alpine_x86_sha=$(get_manifest_sha  "alpine" "latest" "amd64")
           echo $alpine_x86_sha
+          echo "test2"
           alpine_arm64_sha=$(get_manifest_sha  "alpine" "latest" "arm64")
           echo $alpine_arm64_sha
           variant_alpine_x86_sha=$(get_variant_sha  "$repo:latest" "amd64")
