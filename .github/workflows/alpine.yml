@@ -2,11 +2,11 @@
 
 name: alpine-docker-image-build
 
-on:
-  workflow_dispatch:
-    inputs:
+#on:
+#  workflow_dispatch:
+#    inputs:
 
-#on: push
+on: push
 
 #on:
 #  schedule:
