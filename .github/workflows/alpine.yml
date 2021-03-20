@@ -28,30 +28,30 @@ jobs:
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
           repo="neethumohan1212/alpine"
-          source sha_function.sh
-          alpine_x86_sha=$(get_manifest_sha  "alpine:latest" "amd64")
-          echo $alpine_x86_sha
-          alpine_arm64_sha=$(get_manifest_sha  "alpine:latest" "arm64")
-          echo $alpine_arm64_sha
-          echo $repo:latest
+          # source sha_function.sh
+          # alpine_x86_sha=$(get_manifest_sha  "alpine:latest" "amd64")
+          # echo $alpine_x86_sha
+          # alpine_arm64_sha=$(get_manifest_sha  "alpine:latest" "arm64")
+          # echo $alpine_arm64_sha
+          # echo $repo:latest
           variant_alpine_x86_sha=$(get_variant_sha  "$repo:latest" "amd64")
           echo $variant_alpine_x86_sha
-          variant_alpine_arm64_sha=$(get_variant_sha  "$repo:latest" "arm64")
-          echo $variant_alpine_arm64_sha
-          balena_rpi_sha=$(get_tag_sha "balenalib/raspberry-pi-alpine" "latest" )
-          echo $balena_rpi_sha
-          variant_rpi_sha=$(get_variant_sha "$repo:latest" "arm")
-          echo $variant_rpi_sha
-          flag=$(compare_sha  "$alpine_x86_sha" "$variant_alpine_x86_sha" "$balena_rpi_sha" "$variant_rpi_sha" "$alpine_arm64_sha" "$variant_alpine_arm64_sha")
-          echo $flag
-          tag="3.12-$(date +%Y%m%d%H%M)"
-          tag2="latest"
-          echo $tag
-          create_manifests $repo $tag $tag2 "alpine@"$alpine_x86_sha "balenalib/raspberry-pi-alpine@"$balena_rpi_sha "alpine@"$alpine_arm64_sha
-          docker manifest inspect $repo:$tag
-          docker manifest inspect $repo:$tag2
-          if [[ $flag == true ]]; then
-            docker manifest push $repo:$tag; docker manifest push $repo:$tag2
-          else
-            echo "no changes"
-          fi
+          # variant_alpine_arm64_sha=$(get_variant_sha  "$repo:latest" "arm64")
+          # echo $variant_alpine_arm64_sha
+          # balena_rpi_sha=$(get_tag_sha "balenalib/raspberry-pi-alpine" "latest" )
+          # echo $balena_rpi_sha
+          # variant_rpi_sha=$(get_variant_sha "$repo:latest" "arm")
+          # echo $variant_rpi_sha
+          # flag=$(compare_sha  "$alpine_x86_sha" "$variant_alpine_x86_sha" "$balena_rpi_sha" "$variant_rpi_sha" "$alpine_arm64_sha" "$variant_alpine_arm64_sha")
+          # echo $flag
+          # tag="3.12-$(date +%Y%m%d%H%M)"
+          # tag2="latest"
+          # echo $tag
+          # create_manifests $repo $tag $tag2 "alpine@"$alpine_x86_sha "balenalib/raspberry-pi-alpine@"$balena_rpi_sha "alpine@"$alpine_arm64_sha
+          # docker manifest inspect $repo:$tag
+          # docker manifest inspect $repo:$tag2
+          # if [[ $flag == true ]]; then
+          #   docker manifest push $repo:$tag; docker manifest push $repo:$tag2
+          # else
+          #   echo "no changes"
+          # fi
