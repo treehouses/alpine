@@ -33,13 +33,13 @@ jobs:
           echo $alpine_x86_sha
           alpine_arm64_sha=$(get_manifest_sha  "alpine" "latest" "arm64")
           echo $alpine_arm64_sha
-          simple_alpine_x86_sha=$(get_simple_manifest_sha  "$repo:latest" "amd64")
+          simple_alpine_x86_sha=$(get_variant_sha  "$repo:latest" "amd64")
           echo $simple_alpine_x86_sha
-          simple_alpine_arm64_sha=$(get_simple_manifest_sha  "$repo:latest" "arm64")
+          simple_alpine_arm64_sha=$(get_variant_sha  "$repo:latest" "arm64")
           echo $simple_alpine_arm64_sha
           balena_rpi_sha=$(get_tag_sha "balenalib/raspberry-pi-alpine" "latest" )
           echo $balena_rpi_sha
-          simple_rpi_sha=$(get_simple_manifest_sha "$repo:latest" "arm")
+          simple_rpi_sha=$(get_variant_sha "$repo:latest" "arm")
           echo $simple_rpi_sha
           flag=$(compare_sha  "$alpine_x86_sha" "$simple_alpine_x86_sha" "$balena_rpi_sha" "$simple_rpi_sha" "$alpine_arm64_sha" "$simple_alpine_arm64_sha")
           echo $flag
