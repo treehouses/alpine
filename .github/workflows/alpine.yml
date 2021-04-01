@@ -1,24 +1,10 @@
-# This is a basic workflow to help you get started with Actions
-
 name: alpine-docker-image-build
-
-#on:
-#  workflow_dispatch:
-#    inputs:
-
 on: push
-
-#on:
-#  schedule:
-#    - cron: '0 8 * * *'
-
 jobs:
   alpine-docker-image-build:
-    # Set the type of machine to run on
     runs-on: ubuntu-20.04
 
     steps:
-      # Checks out a copy of your repository on the ubuntu-latest machine
       - name: Checkout code
         uses: actions/checkout@v2
 
