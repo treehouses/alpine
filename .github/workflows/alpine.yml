@@ -23,22 +23,23 @@ jobs:
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
       - name: treehouses alpine
         run: |
-          export DOCKER_CLI_EXPERIMENTAL=enabled
+                    export DOCKER_CLI_EXPERIMENTAL=enabled
           repo="neethumohan1212/alpine"
           source sha_function.sh
-          alpine_x86_sha=$(get_manifest_sha  "alpine" "latest" "amd64")
+          alpine_x86_sha=$(get_manifest_sha  "alpine:latest" "amd64")
           echo $alpine_x86_sha
-          alpine_arm64_sha=$(get_manifest_sha  "alpine" "latest" "arm64")
+          alpine_arm64_sha=$(get_manifest_sha  "alpine:latest" "arm64")
           echo $alpine_arm64_sha
-          simple_alpine_x86_sha=$(get_simple_manifest_sha  "$repo:latest" "amd64")
-          echo $simple_alpine_x86_sha
-          simple_alpine_arm64_sha=$(get_simple_manifest_sha  "$repo:latest" "arm64")
-          echo $simple_alpine_arm64_sha
+          echo $repo:latest
+          variant_alpine_x86_sha=$(get_variant_sha  "$repo:latest" "amd64")
+          echo $variant_alpine_x86_sha
+          variant_alpine_arm64_sha=$(get_variant_sha  "$repo:latest" "arm64")
+          echo $variant_alpine_arm64_sha
           balena_rpi_sha=$(get_tag_sha "balenalib/raspberry-pi-alpine" "latest" )
           echo $balena_rpi_sha
-          simple_rpi_sha=$(get_simple_manifest_sha "$repo:latest" "arm")
-          echo $simple_rpi_sha
-          flag=$(compare_sha  "$alpine_x86_sha" "$simple_alpine_x86_sha" "$balena_rpi_sha" "$simple_rpi_sha" "$alpine_arm64_sha" "$simple_alpine_arm64_sha")
+          variant_rpi_sha=$(get_variant_sha "$repo:latest" "arm")
+          echo $variant_rpi_sha
+          flag=$(compare_sha  "$alpine_x86_sha" "$variant_alpine_x86_sha" "$balena_rpi_sha" "$variant_rpi_sha" "$alpine_arm64_sha" "$variant_alpine_arm64_sha")
           echo $flag
           tag="3.12-$(date +%Y%m%d%H%M)"
           tag2="latest"
