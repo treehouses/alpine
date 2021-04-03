@@ -72,9 +72,9 @@ create_manifests(){
     local rpi=$4
     local arm64=$5
     docker manifest create $repo:$tag $x86 $rpi $arm64
-    # docker manifest create $repo:latest $x86 $rpi $arm64
-    # docker manifest annotate $repo:latest $rpi --arch arm
-    # docker manifest annotate $repo:$tag $arm64 --arch arm64
-    # docker manifest annotate $repo:latest $arm64 --arch arm64
-    # docker manifest annotate $repo:$tag $rpi --arch arm
+    docker manifest create $repo:latest $x86 $rpi $arm64
+    docker manifest annotate $repo:latest $rpi --arch arm
+    docker manifest annotate $repo:$tag $arm64 --arch arm64
+    docker manifest annotate $repo:latest $arm64 --arch arm64
+    docker manifest annotate $repo:$tag $rpi --arch arm
 }
