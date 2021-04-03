@@ -5,7 +5,7 @@ name: alpine-docker-image-build
 #     inputs:
 
 on:
-  push
+  push:
   schedule:
     - cron: '0 8 * * *'
 
