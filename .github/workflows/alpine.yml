@@ -4,11 +4,10 @@ name: alpine-docker-image-build
 #   workflow_dispatch:
 #     inputs:
 
-on: push
-
 on:
+  push
   schedule:
-  - cron: '0 8 * * *'
+    - cron: '0 8 * * *'
 
 jobs:
   alpine-docker-image-build:
