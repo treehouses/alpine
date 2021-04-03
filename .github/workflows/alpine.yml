@@ -1,10 +1,8 @@
-# This is a basic workflow to help you get started with Actions
-
 name: alpine-docker-image-build
 
-#on:
-#  workflow_dispatch:
-#    inputs:
+# on:
+#   workflow_dispatch:
+#     inputs:
 
 on: push
 
@@ -21,7 +19,6 @@ jobs:
       # Checks out a copy of your repository on the ubuntu-latest machine
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: docker login
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
       - name: treehouses alpine
@@ -29,23 +26,31 @@ jobs:
           export DOCKER_CLI_EXPERIMENTAL=enabled
           repo="neethumohan1212/alpine"
           source sha_function.sh
-          alpine_x86_sha=$(get_manifest_sha "alpine:latest" "amd64")
+          alpine_x86_sha=$(get_manifest_sha  "alpine" "latest" "amd64")
           echo $alpine_x86_sha
-          alpine_arm64_sha=$(get_manifest_sha  "alpine:latest" "arm64")
+          alpine_arm64_sha=$(get_manifest_sha  "alpine" "latest" "arm64")
           echo $alpine_arm64_sha
-          echo $repo:latest
+          simple_alpine_x86_sha=$(get_simple_manifest_sha  "$repo:latest" "amd64")
+          echo $simple_alpine_x86_sha
+          simple_alpine_arm64_sha=$(get_simple_manifest_sha  "$repo:latest" "arm64")
+          echo $simple_alpine_arm64_sha
           balena_rpi_sha=$(get_tag_sha "balenalib/raspberry-pi-alpine" "latest" )
           echo $balena_rpi_sha
-          flag=true
+          simple_rpi_sha=$(get_simple_manifest_sha "$repo:latest" "arm")
+          echo $simple_rpi_sha
+          flag=$(compare_sha  "$alpine_x86_sha" "$simple_alpine_x86_sha" "$balena_rpi_sha" "$simple_rpi_sha" "$alpine_arm64_sha" "$simple_alpine_arm64_sha")
+          echo $flag
           tag="3.12-$(date +%Y%m%d%H%M)"
           tag2="latest"
+          echo $tag
           docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
           docker manifest create $repo:$tag "alpine@"$alpine_x86_sha "balenalib/raspberry-pi-alpine@"$balena_rpi_sha "alpine@"$alpine_arm64_sha
-          #create_manifests $repo $tag $tag2 "alpine@"$alpine_x86_sha "balenalib/raspberry-pi-alpine@"$balena_rpi_sha "alpine@"$alpine_arm64_sha
+          # create_manifests $repo $tag $tag2 "alpine@"$alpine_x86_sha "balenalib/raspberry-pi-alpine@"$balena_rpi_sha "alpine@"$alpine_arm64_sha
           # docker manifest inspect $repo:$tag
           # docker manifest inspect $repo:$tag2
-          #  if [[ $flag == true ]]; then
-          #    docker manifest push $repo:$tag; docker manifest push $repo:$tag2
-          #  else
-          #    echo "no changes"
-          #  fi
+          # if [[ $flag == true ]]; then
+          #   docker manifest push $repo:$tag; docker manifest push $repo:$tag2
+          # else
+          #   echo "no changes"
+          # fi
+
