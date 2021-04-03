@@ -23,7 +23,7 @@ jobs:
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
       - name: treehouses alpine
         run: |
-                    export DOCKER_CLI_EXPERIMENTAL=enabled
+          export DOCKER_CLI_EXPERIMENTAL=enabled
           repo="neethumohan1212/alpine"
           source sha_function.sh
           alpine_x86_sha=$(get_manifest_sha  "alpine:latest" "amd64")
