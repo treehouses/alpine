@@ -2,16 +2,15 @@
 
 get_variant_sha(){
     local sha
-    docker_repo=$1  #alpine or vmnet/alpine
-    manifest_tag=$2
+    docker_repo=$1  #neethumohan1212/alpine:latest
+    manifest_tag=$2 #amd64
     docker_image=$docker_repo:$manifest_tag
     arch=$3
     variant=$4
     export DOCKER_CLI_EXPERIMENTAL=enabled
-
-    docker pull -q  ${docker_image} &>/dev/null
-    docker manifest inspect ${docker_image} > "$2".txt
-
+    #docker pull -q  ${docker_image} &>/dev/null
+    docker pull -q  ${docker_repo} &>/dev/null
+    docker manifest inspect ${docker_repo} > "$2".txt
     sha=""
     i=0
     while [ "$sha" == "" ] && read -r line

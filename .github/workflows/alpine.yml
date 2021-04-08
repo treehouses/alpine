@@ -6,8 +6,8 @@ name: alpine-docker-image-build
 
 on:
   push:
-  schedule:
-    - cron: '0 */8 * * *'
+  # schedule:
+  #   - cron: '0 */8 * * *'
 
 jobs:
   alpine-docker-image-build:
