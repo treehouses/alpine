@@ -26,8 +26,10 @@ jobs:
           repo="neethumohan1212/alpine"
           source sha_function.sh
           alpine_x86_sha=$(get_variant_sha "alpine" "latest" "amd64")
+          echo "alpine amd64"
           echo $alpine_x86_sha
           variant_alpine_x86_sha=$(get_manifest_sha "$repo" "latest" "amd64")
+          echo "treehouses/alpine amd64"
           echo $variant_alpine_x86_sha
           # balena_rpi_sha=$(get_tag_sha "balenalib/raspberry-pi-alpine" "latest")
           # echo $balena_rpi_sha
