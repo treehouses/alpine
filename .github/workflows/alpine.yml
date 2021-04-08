@@ -32,10 +32,10 @@ jobs:
           echo $repo:latest
           variant_alpine_x86_sha=$(get_variant_sha  "$repo:latest" "amd64")
           echo $variant_alpine_x86_sha
-          # variant_alpine_arm64_sha=$(get_variant_sha  "$repo:latest" "arm64")
-          # echo $variant_alpine_arm64_sha
-          # balena_rpi_sha=$(get_tag_sha "balenalib/raspberry-pi-alpine" "latest" )
-          # echo $balena_rpi_sha
+          variant_alpine_arm64_sha=$(get_variant_sha  "$repo:latest" "arm64")
+          echo $variant_alpine_arm64_sha
+          balena_rpi_sha=$(get_tag_sha "balenalib/raspberry-pi-alpine" "latest" )
+          echo $balena_rpi_sha
           # variant_rpi_sha=$(get_variant_sha "$repo:latest" "arm")
           # echo $variant_rpi_sha
           # flag=$(compare_sha  "$alpine_x86_sha" "$variant_alpine_x86_sha" "$balena_rpi_sha" "$variant_rpi_sha" "$alpine_arm64_sha" "$variant_alpine_arm64_sha")
