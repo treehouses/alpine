@@ -1,0 +1,55 @@
+name: alpine-docker-image-build
+
+on:
+  push:
+  workflow_dispatch:
+  repository_dispatch:
+    types: alpine
+    
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+      - name: docker login
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+      - name: treehouses alpine
+        run: |
+          export DOCKER_CLI_EXPERIMENTAL=enabled
+          repo="treehouses/alpine"
+          source sha_function.sh
+          alpine_x86_sha=$(get_variant_sha "alpine" "latest" "amd64")
+          echo "alpine amd64"
+          echo $alpine_x86_sha
+          variant_alpine_x86_sha=$(get_manifest_sha "$repo:latest" "amd64")
+          echo "treehouses/alpine amd64"
+          echo $variant_alpine_x86_sha
+          balena_rpi_sha=$(get_tag_sha "balenalib/raspberry-pi-alpine" "latest")
+          echo $balena_rpi_sha
+          variant_rpi_sha=$(get_manifest_sha "$repo:latest" "arm")
+          echo $variant_rpi_sha
+          alpine_arm64_sha=$(get_variant_sha "alpine" "latest" "arm64")
+          echo $alpine_arm64_sha
+          variant_alpine_arm64_sha=$(get_manifest_sha "$repo:latest" "arm64")
+          echo $variant_alpine_arm64_sha
+          flag=$(compare_sha  "$alpine_x86_sha" "$variant_alpine_x86_sha" "$balena_rpi_sha" "$variant_rpi_sha" "$alpine_arm64_sha" "$variant_alpine_arm64_sha")
+          echo $flag
+          tag="3.12-$(date +%Y%m%d%H%M)"
+          tag2="latest"
+          echo $tag
+          docker manifest create $repo:$tag "alpine@"$alpine_x86_sha "balenalib/raspberry-pi-alpine@"$balena_rpi_sha "alpine@"$alpine_arm64_sha
+          docker manifest create $repo:latest "alpine@"$alpine_x86_sha "balenalib/raspberry-pi-alpine@"$balena_rpi_sha "alpine@"$alpine_arm64_sha
+          docker manifest annotate $repo:latest "balenalib/raspberry-pi-alpine@"$balena_rpi_sha --arch arm
+          docker manifest annotate $repo:$tag "alpine@"$alpine_arm64_sha --arch arm64
+          docker manifest annotate $repo:latest "alpine@"$alpine_arm64_sha --arch arm64
+          docker manifest annotate $repo:$tag "balenalib/raspberry-pi-alpine@"$balena_rpi_sha --arch arm
+          docker manifest inspect $repo:$tag
+          docker manifest inspect $repo:$tag2
+          if [[ $flag == true ]]; then
+            docker manifest push $repo:$tag; docker manifest push $repo:$tag2
+          else
+            echo "no changes"
+          fi
+
