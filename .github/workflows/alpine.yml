@@ -1,15 +1,11 @@
 name: alpine-docker-image-build
 
-# on:
-#   workflow_dispatch:
-#     inputs:
-
 on:
+  push:
+  workflow_dispatch:
   repository_dispatch:
     types: alpine
-  schedule:
-    - cron: '0 */8 * * *'
-
+    
 jobs:
   alpine-docker-image-build:
     # Set the type of machine to run on
@@ -24,7 +20,7 @@ jobs:
       - name: treehouses alpine
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
-          repo="neethumohan1212/alpine"
+          repo="treehouses/alpine"
           source sha_function.sh
           alpine_x86_sha=$(get_variant_sha "alpine" "latest" "amd64")
           echo "alpine amd64"
