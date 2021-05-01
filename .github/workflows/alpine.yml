@@ -7,7 +7,7 @@ on:
     types: alpine
     
 jobs:
-  build:
+  alpine:
     runs-on: ubuntu-20.04
 
     steps:
