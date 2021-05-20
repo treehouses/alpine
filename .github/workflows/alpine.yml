@@ -22,24 +22,27 @@ jobs:
           export DOCKER_CLI_EXPERIMENTAL=enabled
           repo="treehouses/alpine"
           source .github/workflows/utils.sh
+          echo "amd64"
           alpine_x86_sha=$(get_variant_sha "alpine" "latest" "amd64")
-          echo "alpine amd64"
           echo $alpine_x86_sha
           variant_alpine_x86_sha=$(get_manifest_sha "$repo:latest" "amd64")
-          echo "treehouses/alpine amd64"
           echo $variant_alpine_x86_sha
+          echo "arm"
           balena_rpi_sha=$(get_tag_sha "balenalib/raspberry-pi-alpine" "latest")
           echo $balena_rpi_sha
           variant_rpi_sha=$(get_manifest_sha "$repo:latest" "arm")
           echo $variant_rpi_sha
+          echo "arm64"
           alpine_arm64_sha=$(get_variant_sha "alpine" "latest" "arm64")
           echo $alpine_arm64_sha
           variant_alpine_arm64_sha=$(get_manifest_sha "$repo:latest" "arm64")
           echo $variant_alpine_arm64_sha
+          echo "flag"
           flag=$(compare_sha  "$alpine_x86_sha" "$variant_alpine_x86_sha" "$balena_rpi_sha" "$variant_rpi_sha" "$alpine_arm64_sha" "$variant_alpine_arm64_sha")
           echo $flag
           if [[ $flag == true ]]; then
             tag="3.12-$(date +%Y%m%d%H%M)"
+            echo "tag"
             echo $tag
             tag2="latest"
             docker manifest create $repo:$tag "alpine@"$alpine_x86_sha "balenalib/raspberry-pi-alpine@"$balena_rpi_sha "alpine@"$alpine_arm64_sha
