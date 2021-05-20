@@ -3,7 +3,7 @@ name: alpine-docker-image-build
 on:
   push:
     branches:
-      - main
+      - master
   workflow_dispatch:
   repository_dispatch:
     types: alpine
