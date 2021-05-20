@@ -1,12 +1,12 @@
-name: build on change
+name: build by force
 
 on:
-  push:
-    branches:
-      - master
+  #push:
+  #  branches:
+  #    - master
   workflow_dispatch:
-  repository_dispatch:
-    types: alpine
+  #repository_dispatch:
+  #  types: alpine
 
 jobs:
   alpine:
@@ -37,7 +37,7 @@ jobs:
           variant_alpine_arm64_sha=$(get_manifest_sha "$repo:latest" "arm64")
           echo $variant_alpine_arm64_sha
           echo "change"
-          flag=$(compare_sha  "$alpine_x86_sha" "$variant_alpine_x86_sha" "$balena_rpi_sha" "$variant_rpi_sha" "$alpine_arm64_sha" "$variant_alpine_arm64_sha")
+          flag=true #$(compare_sha  "$alpine_x86_sha" "$variant_alpine_x86_sha" "$balena_rpi_sha" "$variant_rpi_sha" "$alpine_arm64_sha" "$variant_alpine_arm64_sha")
           echo $flag
           if [[ $flag == true ]]; then
             echo "tags"
@@ -59,4 +59,3 @@ jobs:
           else
             echo "no changes"
           fi
-
