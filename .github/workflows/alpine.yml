@@ -1,4 +1,4 @@
-name: alpine-docker-image-build
+name: image https://hub.docker.com/r/treehouses/alpine
 
 on:
   push:
@@ -11,7 +11,6 @@ on:
 jobs:
   alpine:
     runs-on: ubuntu-20.04
-
     steps:
       - name: checkout code
         uses: actions/checkout@v2
@@ -54,6 +53,7 @@ jobs:
             docker manifest inspect $repo:$tag
             docker manifest inspect $repo:$tag2
             docker manifest push $repo:$tag; docker manifest push $repo:$tag2
+            echo "https://hub.docker.com/r/treehouses/alpine/tags"
           else
             echo "no changes"
           fi
