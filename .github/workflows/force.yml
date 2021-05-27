@@ -1,4 +1,4 @@
-name: build by force
+name:  build by force
 
 on:
   #push:
