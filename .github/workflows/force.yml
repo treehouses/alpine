@@ -59,7 +59,7 @@ jobs:
             docker manifest inspect $repo:$tag2
             docker manifest push $repo:$tag2
             echo "https://hub.docker.com/r/treehouses/alpine/tags"
-            treehouses feedback "https://hub.docker.com/r/treehouses/alpine/tags"
+            treehouses feedback "new treehouses/alpine check https://hub.docker.com/r/treehouses/alpine/tags"
           else
             echo "no changes"
           fi
