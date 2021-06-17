@@ -44,7 +44,7 @@ jobs:
             sudo npm install -g @treehouses/cli
             export gitter_channel="${{ secrets.CHANNEL }}"
             echo "tags"
-            tag="3.12-$(date +%Y%m%d%H%M)"
+            tag="$(date +%Y%m%d%H%M)"
             echo $tag
             docker manifest create $repo:$tag "alpine@"$alpine_x86_sha "balenalib/raspberry-pi-alpine@"$balena_rpi_sha "alpine@"$alpine_arm64_sha
             docker manifest annotate $repo:$tag "alpine@"$alpine_arm64_sha --arch arm64
