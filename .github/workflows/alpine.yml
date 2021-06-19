@@ -20,7 +20,7 @@ jobs:
       - name: treehouses alpine
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
-          repo="dyeh123/alpine"
+          repo="treehouses/alpine"
           source .github/workflows/utils.sh
           echo "amd64"
           version="3.13"
