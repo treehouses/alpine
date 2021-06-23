@@ -17,6 +17,8 @@ jobs:
 
       - name: Selenium
         run: |
+          pip3 install selenium
+          pip3 install webdriver-manager
           python .github/workflows/update_docker.py
           echo "done"
         
