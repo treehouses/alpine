@@ -17,5 +17,6 @@ jobs:
 
       - name: Selenium
         run: |
+          python .github/workflows/update_docker.py
           echo "done"
         
