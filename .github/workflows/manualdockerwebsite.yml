@@ -1,0 +1,20 @@
+name: Manual Docker Website
+
+on:
+  workflow_dispatch:
+
+jobs:
+  fillform:
+    name: Manual Lint Code Base
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Manual Lint Code Base
+        run: |
+          echo "done"
+        
