@@ -6,7 +6,7 @@ on:
   
 jobs:
   fillform:
-    name: Manual Lint Code Base
+    name: Manual Docker Website
     runs-on: ubuntu-latest
 
     steps:
@@ -15,7 +15,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Manual Lint Code Base
+      - name: Selenium
         run: |
           echo "done"
         
