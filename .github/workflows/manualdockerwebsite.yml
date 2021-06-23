@@ -2,7 +2,8 @@ name: Manual Docker Website
 
 on:
   workflow_dispatch:
-
+  push:
+  
 jobs:
   fillform:
     name: Manual Lint Code Base
