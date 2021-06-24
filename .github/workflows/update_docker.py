@@ -1,4 +1,5 @@
 import sys
+import timer
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
@@ -11,7 +12,7 @@ driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_option
 url = "https://hub.docker.com/repository/docker/dyeh123/alpine"
 
 driver.get(url)
-
+timer.sleep(10)
 driver.implicitly_wait(60)
 
 docker_id = driver.find_element_by_id('nw_username')
@@ -30,6 +31,7 @@ print("Logged in...")
 driver.get(url)
 
 #driver.implicitly_wait(15)
+timer.sleep(10)
 print(driver.page_source)
 edit_button = driver.find_element_by_class_name("dbutton.styles__button___349c4.styles__dull___5FU0B.styles__icon___32G-S")
 #driver.implicitly_wait(30)
