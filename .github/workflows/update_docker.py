@@ -36,16 +36,16 @@ driver.get(url)
 
 driver.implicitly_wait(15)
 
-edit_button = driver.find_element_by_class_name("dbutton.styles__button___349c4.styles__dull___5FU0B.styles__icon___32G-S")
+edit_button = driver.find_element_by_class_name("dbutton styles__editBtn___1y3wL styles__button___349c4 styles__dull___5FU0B styles__icon___32G-S")
 
 driver.implicitly_wait(15)
 
 edit_button.click()
 
-description = driver.find_element_by_name("editableField")
+description = driver.find_element_by_class_name("styles__contents___2GAXQ")
 
 description.clear()
-description.send_keys("New test")
+description.send_keys(getReadMe())
 description.submit()
 
 print("Updated description...")
