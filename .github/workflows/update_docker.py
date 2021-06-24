@@ -44,6 +44,7 @@ driver.implicitly_wait(30)
 
 edit_button.click()
 
+driver.implicitly_wait(35)
 description = driver.find_element_by_class_name("styles__contents___2GAXQ")
 
 description.clear()
