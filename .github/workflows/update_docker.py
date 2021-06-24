@@ -46,7 +46,9 @@ description = driver.find_element_by_class_name("styles__contents___2GAXQ")
 
 description.clear()
 description.send_keys(getReadMe())
-description.submit()
+update_button = driver.find_element_by_class_name("dbutton.styles__button___349c4.styles__new___28c7_")
+
+update_button.click()
 
 print("Updated description...")
 print("Done")
