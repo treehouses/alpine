@@ -12,6 +12,7 @@ chrome_options = Options()
 chrome_options.add_argument("--headless")
 chrome_options.add_argument("--no-sandbox")
 driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+driver.maximize_window()
 
 url = "https://hub.docker.com/repository/docker/dyeh123/alpine"
 
