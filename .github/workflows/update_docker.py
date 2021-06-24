@@ -51,7 +51,7 @@ driver.get(url)
 #time.sleep(10)
 print(driver.page_source)
 try:
-    edit_button = WebDriverWait(driver, 60).until(EC.presence_of_element_located((By.className, 'dbutton.styles__button___349c4.styles__dull___5FU0B.styles__icon___32G-S')))
+    edit_button = WebDriverWait(driver, 60).until(EC.presence_of_element_located((By.CLASS_NAME, 'dbutton.styles__button___349c4.styles__dull___5FU0B.styles__icon___32G-S')))
     print("Found edit description")
 except TimeoutException:
     print("Could not find edit description button")
@@ -62,7 +62,7 @@ except TimeoutException:
 edit_button.click()
 
 try:
-    description = WebDriverWait(driver, 60).until(EC.presence_of_element_located((By.name, 'editableField')))
+    description = WebDriverWait(driver, 60).until(EC.presence_of_element_located((By.NAME, 'editableField')))
     print("Found description text")
 except TimeoutException:
     print("Could not find description text area")
