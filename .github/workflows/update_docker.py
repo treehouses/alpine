@@ -34,11 +34,11 @@ submit_button.click()
 print("Logged in...")
 driver.get(url)
 
-driver.implicitly_wait(15)
+driver.implicitly_wait(30)
 
 edit_button = driver.find_element_by_class_name("dbutton.styles__editBtn___1y3wL.styles__button___349c4.styles__dull___5FU0B.styles__icon___32G-S")
 
-driver.implicitly_wait(15)
+driver.implicitly_wait(30)
 
 edit_button.click()
 
