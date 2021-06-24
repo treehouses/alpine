@@ -33,7 +33,7 @@ driver.implicitly_wait(15)
 
 edit_button = driver.find_element_by_class_name("dbutton.styles__button___349c4.styles__dull___5FU0B.styles__icon___32G-S")
 
-driver.implicitly_wait(15)
+driver.implicitly_wait(30)
 
 edit_button.click()
 
