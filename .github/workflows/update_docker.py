@@ -1,6 +1,7 @@
 import sys
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.action_chains import ActionChains
 from webdriver_manager.chrome import ChromeDriverManager
 
 def getReadMe():
@@ -52,6 +53,8 @@ driver.implicitly_wait(35)
 update_button = driver.find_element_by_class_name("dbutton.styles__button___349c4.styles__new___28c7_")
 
 driver.implicitly_wait(35)
+actions = ActionChains(driver)
+actions.move_to_element(update_button).perform()
 update_button.click()
 
 print("Updated description...")
