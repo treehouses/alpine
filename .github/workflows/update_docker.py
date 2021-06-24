@@ -25,7 +25,8 @@ docker_id = driver.find_element_by_id('nw_username')
 docker_pass = driver.find_element_by_id('nw_password')
 
 docker_id.send_keys(sys.argv[1])
-print(sys.argv[1])
+readme = getReadMe()
+print(readme)
 docker_pass.send_keys(sys.argv[2])
 
 submit_button = driver.find_element_by_id('nw_submit')
@@ -46,7 +47,7 @@ edit_button.click()
 description = driver.find_element_by_name("editableField")
 
 description.clear()
-description.send_keys(getReadMe())
+description.send_keys(readme)
 description.submit()
 
 print("Updated description...")
