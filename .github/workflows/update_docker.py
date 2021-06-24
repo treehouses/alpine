@@ -45,7 +45,7 @@ edit_button.click()
 description = driver.find_element_by_name("editableField")
 
 description.clear()
-description.send_keys(getReadMe())
+description.send_keys("New test")
 description.submit()
 
 print("Updated description...")
