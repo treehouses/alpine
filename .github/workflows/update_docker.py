@@ -41,7 +41,7 @@ print(driver.page_source)
 edit_button = driver.find_element_by_class_name("dbutton.styles__button___349c4.styles__dull___5FU0B.styles__icon___32G-S")
 #driver.implicitly_wait(30)
 #driver.find_element_by_id('announcement-bar')
-# edit_button.click()
+edit_button.click()
 
 description = driver.find_element_by_name("editableField")
 
