@@ -4,6 +4,11 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 
+def getReadMe():
+    with open(sys.argv[3], 'r') as f:
+        txt = f.read()
+    return txt
+  
 chrome_options = Options()
 chrome_options.add_argument("--headless")
 chrome_options.add_argument("--no-sandbox")
@@ -41,7 +46,7 @@ edit_button = driver.find_element_by_class_name("dbutton.styles__button___349c4.
 description = driver.find_element_by_name("editableField")
 
 description.clear()
-description.send_keys("Updated with github actions")
+description.send_keys(getReadMe())
 description.submit()
 
 print("Updated description...")
