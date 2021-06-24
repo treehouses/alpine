@@ -32,16 +32,16 @@ driver.get(url)
 #driver.implicitly_wait(15)
 
 #edit_button = driver.find_element_by_class_name("dbutton.styles__button___349c4.styles__dull___5FU0B.styles__icon___32G-S")
-#edit_button = driver.find_element_by_xpath("//button[@data-testid='editRepoDescription']")
+edit_button = driver.find_element_by_xpath("/html/body/div[1]/div[1]/div/div[2]/div/div/div[3]/div/div[2]/div/div/div[1]/div[2]/button")
 #driver.implicitly_wait(30)
-driver.find_element_by_id('announcement-bar')
-# edit_button.click()
+#driver.find_element_by_id('announcement-bar')
+edit_button.click()
 
-# description = driver.find_element_by_name("editableField")
+description = driver.find_element_by_name("editableField")
 
-# description.clear()
-# description.send_keys("Updated with github actions")
-# description.submit()
+description.clear()
+description.send_keys("Updated with github actions")
+description.submit()
 
 print("Updated description...")
 print("Done")
