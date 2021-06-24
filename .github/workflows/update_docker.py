@@ -12,7 +12,7 @@ url = "https://hub.docker.com/repository/docker/dyeh123/alpine"
 
 driver.get(url)
 
-driver.implicitly_wait(5)
+driver.implicitly_wait(60)
 
 docker_id = driver.find_element_by_id('nw_username')
 
@@ -29,11 +29,11 @@ submit_button.click()
 print("Logged in...")
 driver.get(url)
 
-driver.implicitly_wait(15)
+#driver.implicitly_wait(15)
 
 edit_button = driver.find_element_by_class_name("dbutton.styles__button___349c4.styles__dull___5FU0B.styles__icon___32G-S")
 
-driver.implicitly_wait(30)
+#driver.implicitly_wait(30)
 
 edit_button.click()
 
