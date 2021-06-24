@@ -20,5 +20,6 @@ jobs:
           pip3 install selenium
           pip3 install webdriver-manager
           python .github/workflows/update_docker.py ${{ secrets.DOCKERUSERNAME }} ${{ secrets.DOCKERPASSWORD }}
+          cat README.md
           echo "done"
         
