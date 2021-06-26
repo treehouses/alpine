@@ -16,7 +16,7 @@ chrome_options.add_argument('--headless')
 driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
 driver.maximize_window()
 
-url = "https://hub.docker.com/repository/docker/dyeh123/alpine"
+url = "https://hub.docker.com/repository/docker/treehouses/alpine"
 driver.get(url)
 driver.implicitly_wait(10)
 
