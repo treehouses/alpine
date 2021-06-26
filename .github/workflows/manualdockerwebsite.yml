@@ -2,7 +2,7 @@ name: Manual Docker Website
 
 on:
   workflow_dispatch:
-  push:
+  #push:
   
 jobs:
   fillform:
