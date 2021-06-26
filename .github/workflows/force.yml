@@ -23,7 +23,7 @@ jobs:
           repo="treehouses/alpine"
           source .github/workflows/utils.sh
           echo "amd64"
-          version="3.13"
+          version="3.12"
           alpine_x86_sha=$(get_variant_sha "alpine" "$version" "amd64")
           echo $alpine_x86_sha
           #variant_alpine_x86_sha=$(get_manifest_sha "$repo:latest" "amd64")
