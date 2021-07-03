@@ -1,0 +1,22 @@
+name: Manual Docker Website
+
+on:
+  workflow_dispatch:
+  
+jobs:
+  fillform:
+    name: Manual Docker Website
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Selenium
+        run: |
+          pip3 install selenium
+          pip3 install webdriver-manager
+          python .github/workflows/update_docker.py ${{ secrets.DOCKERUSERNAME }} ${{ secrets.DOCKERPASSWORD }} README.md
+          echo "done"
