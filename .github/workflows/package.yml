@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - main
+      - deploy-to-github
   workflow_dispatch:
   repository_dispatch:
     types: alpine
