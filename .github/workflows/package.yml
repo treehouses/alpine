@@ -17,7 +17,7 @@ jobs:
       - name: checkout code
         uses: actions/checkout@v2
       - name: ghcr login
-        run: ghcr login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+        run: docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
       - name: treehouses alpine
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
