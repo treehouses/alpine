@@ -48,6 +48,7 @@ jobs:
             echo "tags"
             tag="$(date +%Y%m%d%H%M)"
             echo $tag
+            docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }} && echo "logged in to docker"
             docker manifest create $repo:$tag "alpine@"$alpine_x86_sha "balenalib/raspberry-pi-alpine@"$balena_rpi_sha "alpine@"$alpine_arm64_sha
             docker manifest annotate $repo:$tag "alpine@"$alpine_arm64_sha --arch arm64
             docker manifest annotate $repo:$tag "balenalib/raspberry-pi-alpine@"$balena_rpi_sha --arch arm
