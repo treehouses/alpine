@@ -56,7 +56,7 @@ jobs:
             echo 2
             docker manifest annotate $repo:$tag "balenalib/raspberry-pi-alpine@"$balena_rpi_sha --arch arm
             echo 3
-            docker manifest inspect $repo:$tag
+            #docker manifest inspect $repo:$tag
             echo 4
             docker manifest push $repo:$tag
             echo 5
