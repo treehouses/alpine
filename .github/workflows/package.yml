@@ -56,6 +56,12 @@ jobs:
             docker pull "alpine@"$alpine_arm64_sha
             docker tag "alpine@"$alpine_arm64_sha "$repo:arm64"
             echo 0
+            docker images
+            echo 0.25
+            docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+            echo 0.5
+            docker images
+            echo 0.75
             docker manifest create $repo:$tag "$repo:x86" "$repo:arm" "$repo:arm64"
             echo 1
             docker manifest annotate $repo:$tag "$repo:arm64" --arch arm64
