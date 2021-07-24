@@ -55,6 +55,9 @@ jobs:
             docker tag "balenalib/raspberry-pi-alpine@"$balena_rpi_sha "$repo:arm"
             docker pull "alpine@"$alpine_arm64_sha
             docker tag "alpine@"$alpine_arm64_sha "$repo:arm64"
+            docker push "$repo:arm"
+            docker push "$repo:x86"
+            docker push "$repo:arm64"
             echo 0
             docker images
             echo 0.25
