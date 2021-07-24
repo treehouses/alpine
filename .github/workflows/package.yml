@@ -69,7 +69,7 @@ jobs:
             echo 1
             docker manifest annotate $repo:$tag "$repo:arm64" --arch arm64
             echo 2
-            docker manifest annotate $repo:$tag "$repo:arm"-arch arm
+            docker manifest annotate $repo:$tag "$repo:arm" --arch arm
             echo 3
             docker manifest inspect $repo:$tag
             echo 4
