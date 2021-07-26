@@ -31,10 +31,11 @@ jobs:
             arm64) : "arm64v8/alpine:$version" ;;
           esac
           image="$_"
-          docker buildx build -t ghcr.io/rjpadilla/alpine:${{ matrix.arch }} --build-arg IMAGE=$image . 
-          docker tag ghcr.io/rjpadilla/alpine:${{ matrix.arch }} rjpadilla/alpine:${{ matrix.arch }}
-          docker push ghcr.io/rjpadilla/alpine:${{ matrix.arch }}
-          docker push rjpadilla/alpine:${{ matrix.arch }}
+          repo="rjpadilla/alpine:${{ matrix.arch }}"
+          docker buildx build -t ghcr.io/$repo --build-arg IMAGE=$image . 
+          docker tag ghcr.io/$repo docker.io/$repo
+          docker push ghcr.io/$repo
+          docker push docker.io/$repo
           docker images
   
   manifests:
