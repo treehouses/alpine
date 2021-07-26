@@ -1,2 +1,2 @@
-ARG ARCH=
-FROM ${ARCH}/alpine
+ARG IMAGE=
+FROM ${IMAGE}
