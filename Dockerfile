@@ -1,0 +1,2 @@
+ARG ARCH=
+FROM ${ARCH}/alpine

@@ -1,95 +1,63 @@
-name: build on change
+name: publish
 
-on:
-  push:
-    branches:
-      - master
-      - main
-      - github-packages
-  workflow_dispatch:
-  repository_dispatch:
-    types: alpine
+on: [push]
 
 jobs:
-  alpine:
-    runs-on: ubuntu-20.04
+  images:
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [amd64, arm, arm64]
+    runs-on: ubuntu-latest
+
     steps:
-      - name: checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
-      - name: ghcr login
+
+      - name: Log in to Docker
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+
+      - name: Log in to the Container registry
         run: docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
-      - name: treehouses alpine
+      
+      - name: Build docker image
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
-          repo="ghcr.io/rjpadilla/alpine"
-          source .github/workflows/utils.sh
-          echo "amd64"
-          version="3.12"
-          alpine_amd64_sha=$(get_variant_sha "alpine" "$version" "amd64")
-          echo $alpine_amd64_sha
-          variant_alpine_amd64_sha=$(get_manifest_sha "$repo:latest" "amd64")
-          echo $variant_alpine_amd64_sha
-          echo "arm"
-          balena_rpi_sha=$(get_tag_sha "balenalib/raspberry-pi-alpine" "$version")
-          echo $balena_rpi_sha
-          variant_rpi_sha=$(get_manifest_sha "$repo:latest" "arm")
-          echo $variant_rpi_sha
-          echo "arm64"
-          alpine_arm64_sha=$(get_variant_sha "alpine" "$version" "arm64")
-          echo $alpine_arm64_sha
-          variant_alpine_arm64_sha=$(get_manifest_sha "$repo:latest" "arm64")
-          echo $variant_alpine_arm64_sha
-          echo "change"
-          flag=$(compare_sha  "$alpine_amd64_sha" "$variant_alpine_amd64_sha" "$balena_rpi_sha" "$variant_rpi_sha" "$alpine_arm64_sha" "$variant_alpine_arm64_sha")
-          echo $flag
-          if [[ $flag == true ]]; then
-            sudo npm install -g @treehouses/cli
-            export gitter_channel="${{ secrets.CHANNEL }}"
-            echo "tags"
-            tag="$(date +%Y%m%d%H%M)"
-            echo $tag
-            docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }} && echo "logged in to docker"
-            docker pull "alpine@"$alpine_amd64_sha
-            docker tag "alpine@"$alpine_amd64_sha "$repo:amd64" 
-            docker pull "balenalib/raspberry-pi-alpine@"$balena_rpi_sha
-            docker tag "balenalib/raspberry-pi-alpine@"$balena_rpi_sha "$repo:arm"
-            docker pull "alpine@"$alpine_arm64_sha
-            docker tag "alpine@"$alpine_arm64_sha "$repo:arm64"
-            docker push "$repo:arm"
-            docker push "$repo:amd64"
-            docker push "$repo:arm64"
-            echo 0
-            docker images
-            echo 0.25
-            docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
-            echo 0.5
-            docker images
-            echo 0.75
-            docker manifest create $repo:$tag "$repo:amd64" "$repo:arm" "$repo:arm64"
-            echo 1
-            docker manifest annotate $repo:$tag "$repo:arm64" --arch arm64
-            echo 2
-            docker manifest annotate $repo:$tag "$repo:arm" --arch arm
-            echo 3
-            docker manifest inspect $repo:$tag
-            echo 4
-            docker manifest push $repo:$tag
-            echo 5
-            tag2="latest"
-            echo $tag2
-            echo 6
-            docker manifest create $repo:$tag2 "$repo:amd64" "$repo:arm" "$repo:arm64"
-            echo 7
-            docker manifest annotate $repo:$tag2 "$repo:arm64" --arch arm64
-            echo 8
-            docker manifest annotate $repo:$tag2 "$repo:arm" --arch arm
-            echo 9
-            docker manifest inspect $repo:$tag2
-            echo 10
-            docker manifest push $repo:$tag2
-            echo "https://github.com/rjpadilla/alpine/pkgs/container/alpine"
-            treehouses feedback "new rjpadilla/alpine check https://github.com/rjpadilla/alpine/pkgs/container/alpine"
-          else
-            echo "no changes"
-          fi
+          docker run --privileged --rm docker/binfmt:a7996909642ee92942dcd6cff44b9b95f08dad64
+          case ${{ matrix.arch }} in
+            amd64) : "amd64" ;;
+            arm) : "arm32v6" ;;
+            arm64) : "arm64v8" ;;
+          esac
+          arch="$_"
+          docker buildx build -t ghcr.io/rjpadilla/hello:${{ matrix.arch }} --build-arg ARCH=$arch . 
+          docker push ghcr.io/rjpadilla/hello:${{ matrix.arch }}
+          docker build  -t rjpadilla/hello:${{ matrix.arch }} --build-arg ARCH=$arch . 
+          docker push rjpadilla/hello:${{ matrix.arch }}
+          docker images
+  
+  manifests:
+    needs: build-and-push-image
+    strategy:
+      fail-fast: false
+      matrix:
+        registry: [rjpadilla, ghcr.io/rjpadilla]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log in to the Container registry
+        run: docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Log in to Docker
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+
+      - name: Deploying manifest to Github Packages
+        run: |
+          docker images
+          docker manifest create ${{ matrix.registry }}/hello:latest ${{ matrix.registry }}/hello:amd64 ${{ matrix.registry }}/hello:arm ${{ matrix.registry }}/hello:arm64
+          docker manifest inspect ${{ matrix.registry }}/hello:latest
+          docker manifest annotate ${{ matrix.registry }}/hello:latest ${{ matrix.registry }}/hello:arm --os linux --arch arm 
+          docker manifest inspect ${{ matrix.registry }}/hello:latest
+          docker manifest push ${{ matrix.registry }}/hello:latest
+
+      
+      
