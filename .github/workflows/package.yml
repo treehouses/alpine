@@ -30,10 +30,10 @@ jobs:
             arm64) : "arm64v8" ;;
           esac
           arch="$_"
-          docker buildx build -t ghcr.io/rjpadilla/hello:${{ matrix.arch }} --build-arg ARCH=$arch . 
-          docker push ghcr.io/rjpadilla/hello:${{ matrix.arch }}
-          docker build  -t rjpadilla/hello:${{ matrix.arch }} --build-arg ARCH=$arch . 
-          docker push rjpadilla/hello:${{ matrix.arch }}
+          docker buildx build -t ghcr.io/rjpadilla/alpine:${{ matrix.arch }} --build-arg ARCH=$arch . 
+          docker push ghcr.io/rjpadilla/alpine:${{ matrix.arch }}
+          docker build  -t rjpadilla/alpine:${{ matrix.arch }} --build-arg ARCH=$arch . 
+          docker push rjpadilla/alpine:${{ matrix.arch }}
           docker images
   
   manifests:
@@ -53,11 +53,11 @@ jobs:
       - name: Deploying manifest to Github Packages
         run: |
           docker images
-          docker manifest create ${{ matrix.registry }}/hello:latest ${{ matrix.registry }}/hello:amd64 ${{ matrix.registry }}/hello:arm ${{ matrix.registry }}/hello:arm64
-          docker manifest inspect ${{ matrix.registry }}/hello:latest
-          docker manifest annotate ${{ matrix.registry }}/hello:latest ${{ matrix.registry }}/hello:arm --os linux --arch arm 
-          docker manifest inspect ${{ matrix.registry }}/hello:latest
-          docker manifest push ${{ matrix.registry }}/hello:latest
+          docker manifest create ${{ matrix.registry }}/alpine:latest ${{ matrix.registry }}/alpine:amd64 ${{ matrix.registry }}/alpine:arm ${{ matrix.registry }}/alpine:arm64
+          docker manifest inspect ${{ matrix.registry }}/alpine:latest
+          docker manifest annotate ${{ matrix.registry }}/alpine:latest ${{ matrix.registry }}/alpine:arm --os linux --arch arm 
+          docker manifest inspect ${{ matrix.registry }}/alpine:latest
+          docker manifest push ${{ matrix.registry }}/alpine:latest
 
       
       
