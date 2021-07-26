@@ -32,7 +32,7 @@ jobs:
           image="$_"
           docker buildx build -t ghcr.io/rjpadilla/alpine:${{ matrix.arch }} --build-arg IMAGE=$image . 
           docker push ghcr.io/rjpadilla/alpine:${{ matrix.arch }}
-          docker build  -t rjpadilla/alpine:${{ matrix.arch }} --build-arg ARCH=$arch . 
+          docker build  -t rjpadilla/alpine:${{ matrix.arch }} --build-arg IMAGE=$image . 
           docker push rjpadilla/alpine:${{ matrix.arch }}
           docker images
   
