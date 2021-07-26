@@ -25,10 +25,10 @@ jobs:
           source .github/workflows/utils.sh
           echo "amd64"
           version="3.12"
-          alpine_x86_sha=$(get_variant_sha "alpine" "$version" "amd64")
-          echo $alpine_x86_sha
-          variant_alpine_x86_sha=$(get_manifest_sha "$repo:latest" "amd64")
-          echo $variant_alpine_x86_sha
+          alpine_amd64_sha=$(get_variant_sha "alpine" "$version" "amd64")
+          echo $alpine_amd64_sha
+          variant_alpine_amd64_sha=$(get_manifest_sha "$repo:latest" "amd64")
+          echo $variant_alpine_amd64_sha
           echo "arm"
           balena_rpi_sha=$(get_tag_sha "balenalib/raspberry-pi-alpine" "$version")
           echo $balena_rpi_sha
@@ -40,7 +40,7 @@ jobs:
           variant_alpine_arm64_sha=$(get_manifest_sha "$repo:latest" "arm64")
           echo $variant_alpine_arm64_sha
           echo "change"
-          flag=$(compare_sha  "$alpine_x86_sha" "$variant_alpine_x86_sha" "$balena_rpi_sha" "$variant_rpi_sha" "$alpine_arm64_sha" "$variant_alpine_arm64_sha")
+          flag=$(compare_sha  "$alpine_amd64_sha" "$variant_alpine_amd64_sha" "$balena_rpi_sha" "$variant_rpi_sha" "$alpine_arm64_sha" "$variant_alpine_arm64_sha")
           echo $flag
           if [[ $flag == true ]]; then
             sudo npm install -g @treehouses/cli
@@ -49,14 +49,14 @@ jobs:
             tag="$(date +%Y%m%d%H%M)"
             echo $tag
             docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }} && echo "logged in to docker"
-            docker pull "alpine@"$alpine_x86_sha
-            docker tag "alpine@"$alpine_x86_sha "$repo:x86" 
+            docker pull "alpine@"$alpine_amd64_sha
+            docker tag "alpine@"$alpine_amd64_sha "$repo:amd64" 
             docker pull "balenalib/raspberry-pi-alpine@"$balena_rpi_sha
             docker tag "balenalib/raspberry-pi-alpine@"$balena_rpi_sha "$repo:arm"
             docker pull "alpine@"$alpine_arm64_sha
             docker tag "alpine@"$alpine_arm64_sha "$repo:arm64"
             docker push "$repo:arm"
-            docker push "$repo:x86"
+            docker push "$repo:amd64"
             docker push "$repo:arm64"
             echo 0
             docker images
@@ -65,7 +65,7 @@ jobs:
             echo 0.5
             docker images
             echo 0.75
-            docker manifest create $repo:$tag "$repo:x86" "$repo:arm" "$repo:arm64"
+            docker manifest create $repo:$tag "$repo:amd64" "$repo:arm" "$repo:arm64"
             echo 1
             docker manifest annotate $repo:$tag "$repo:arm64" --arch arm64
             echo 2
@@ -78,7 +78,7 @@ jobs:
             tag2="latest"
             echo $tag2
             echo 6
-            docker manifest create $repo:$tag2 "$repo:x86" "$repo:arm" "$repo:arm64"
+            docker manifest create $repo:$tag2 "$repo:amd64" "$repo:arm" "$repo:arm64"
             echo 7
             docker manifest annotate $repo:$tag2 "$repo:arm64" --arch arm64
             echo 8
