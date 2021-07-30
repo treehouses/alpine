@@ -34,9 +34,9 @@ jobs:
           repo="rjpadilla/alpine-tags:${{ matrix.arch }}"
           myrepo="rjpadilla/alpine"
           date="$(date +%Y%m%d%H%M)"
-          amd64_sha=$(get_variant_sha "$image" "$version" "amd64")
+          amd64_sha=$(get_variant_sha "$image" "$version" "${{ matrix.arch }}")
           echo $amd64_sha
-          variant_amd64_sha=$(get_manifest_sha "$myrepo:latest" "amd64")
+          variant_amd64_sha=$(get_manifest_sha "$myrepo:latest" "${{ matrix.arch }}")
           echo $variant_amd64_sha
           # echo "arm"
           # balena_rpi_sha=$(get_tag_sha "balenalib/raspberry-pi-alpine" "$version")
