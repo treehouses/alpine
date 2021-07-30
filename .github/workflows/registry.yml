@@ -26,9 +26,9 @@ jobs:
           docker run --privileged --rm docker/binfmt:a7996909642ee92942dcd6cff44b9b95f08dad64
           version="3.12"
           case ${{ matrix.arch }} in
-            amd64) : "amd64/alpine" ;;
+            amd64) : "alpine" ;;
             arm) : "balenalib/raspberry-pi-alpine" ;;
-            arm64) : "arm64v8/alpine" ;;
+            arm64) : "alpine" ;;
           esac
           image="$_"
           repo="rjpadilla/alpine-tags:${{ matrix.arch }}"
