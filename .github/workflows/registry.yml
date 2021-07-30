@@ -26,16 +26,17 @@ jobs:
           docker run --privileged --rm docker/binfmt:a7996909642ee92942dcd6cff44b9b95f08dad64
           version="3.12"
           case ${{ matrix.arch }} in
-            amd64) : "amd64/alpine:$version" ;;
-            arm) : "balenalib/raspberry-pi-alpine:$version" ;;
-            arm64) : "arm64v8/alpine:$version" ;;
+            amd64) : "amd64/alpine" ;;
+            arm) : "balenalib/raspberry-pi-alpine" ;;
+            arm64) : "arm64v8/alpine" ;;
           esac
           image="$_"
           repo="rjpadilla/alpine-tags:${{ matrix.arch }}"
+          myrepo="rjpadilla/alpine"
           date="$(date +%Y%m%d%H%M)"
-          amd64_sha=$(get_variant_sha "alpine" "$version" "amd64")
+          amd64_sha=$(get_variant_sha "$image" "$version" "amd64")
           echo $alpine_x86_sha
-          variant_amd64_sha=$(get_manifest_sha "$repo:latest" "amd64")
+          variant_amd64_sha=$(get_manifest_sha "$myrepo:latest" "amd64")
           echo $variant_alpine_x86_sha
           # echo "arm"
           # balena_rpi_sha=$(get_tag_sha "balenalib/raspberry-pi-alpine" "$version")
@@ -47,8 +48,8 @@ jobs:
           # echo $alpine_arm64_sha
           # variant_alpine_arm64_sha=$(get_manifest_sha "$repo:latest" "arm64")
           # echo $variant_alpine_arm64_sha
-          docker build -t ghcr.io/$repo --build-arg IMAGE=$image . 
-          docker build -t docker.io/$repo --build-arg IMAGE=$image . 
+          docker build -t ghcr.io/$repo --build-arg IMAGE=$image$version . 
+          docker build -t docker.io/$repo --build-arg IMAGE=$image$version . 
           echo "change"
           flag=$(compare_sha  "$amd64_sha" "$variant_amd64_sha")
           echo $flag
