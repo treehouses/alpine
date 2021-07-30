@@ -3,13 +3,7 @@ name: publish
 on: [push]
 
 jobs:
-  images:
-    strategy:
-      fail-fast: false
-      matrix:
-        arch: [amd64, arm, arm64]
-    runs-on: ubuntu-latest
-
+  compare:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -25,34 +19,32 @@ jobs:
           source .github/workflows/utils.sh
           docker run --privileged --rm docker/binfmt:a7996909642ee92942dcd6cff44b9b95f08dad64
           version="3.12"
-          case ${{ matrix.arch }} in
-            amd64) : "alpine" ;;
-            arm) : "balenalib/raspberry-pi-alpine" ;;
-            arm64) : "alpine" ;;
-          esac
-          image="$_"
-          repo="rjpadilla/alpine-tags:${{ matrix.arch }}"
-          myrepo="rjpadilla/alpine"
-          date="$(date +%Y%m%d%H%M)"
-          amd64_sha=$(get_variant_sha "$image" "$version" "${{ matrix.arch }}")
-          echo $amd64_sha
-          variant_amd64_sha=$(get_manifest_sha "$myrepo:latest" "${{ matrix.arch }}")
-          echo $variant_amd64_sha
-          # echo "arm"
-          # balena_rpi_sha=$(get_tag_sha "balenalib/raspberry-pi-alpine" "$version")
-          # echo $balena_rpi_sha
-          # variant_rpi_sha=$(get_manifest_sha "$repo:latest" "arm")
-          # echo $variant_rpi_sha
-          # echo "arm64"
-          # alpine_arm64_sha=$(get_variant_sha "alpine" "$version" "arm64")
-          # echo $alpine_arm64_sha
-          # variant_alpine_arm64_sha=$(get_manifest_sha "$repo:latest" "arm64")
-          # echo $variant_alpine_arm64_sha
-          docker build -t ghcr.io/$repo --build-arg IMAGE=$image:$version . 
-          docker build -t docker.io/$repo --build-arg IMAGE=$image:$version . 
+          repo="rjpadilla/alpine"
+          alpine_x86_sha=$(get_variant_sha "alpine" "$version" "amd64")
+          echo $alpine_x86_sha
+          variant_alpine_x86_sha=$(get_manifest_sha "$repo:latest" "amd64")
+          echo $variant_alpine_x86_sha
+          echo "arm"
+          balena_rpi_sha=$(get_tag_sha "balenalib/raspberry-pi-alpine" "$version")
+          echo $balena_rpi_sha
+          variant_rpi_sha=$(get_manifest_sha "$repo:latest" "arm")
+          echo $variant_rpi_sha
+          echo "arm64"
+          alpine_arm64_sha=$(get_variant_sha "alpine" "$version" "arm64")
+          echo $alpine_arm64_sha
+          variant_alpine_arm64_sha=$(get_manifest_sha "$repo:latest" "arm64")
+          echo $variant_alpine_arm64_sha
           echo "change"
-          flag=$(compare_sha  "$amd64_sha" "$variant_amd64_sha")
+          flag=$(compare_sha  "$alpine_x86_sha" "$variant_alpine_x86_sha" "$balena_rpi_sha" "$variant_rpi_sha" "$alpine_arm64_sha" "$variant_alpine_arm64_sha")
           echo $flag
+  # images:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       arch: [amd64, arm, arm64]
+  #   runs-on: ubuntu-latest
+
+    
           # docker tag ghcr.io/$repo ghcr.io/$repo-$date
           # docker tag docker.io/$repo docker.io/$repo-$date
           # docker push ghcr.io/$repo
