@@ -38,6 +38,7 @@ jobs:
           echo "change"
           flag=$(compare_sha  "$alpine_x86_sha" "$variant_alpine_x86_sha" "$balena_rpi_sha" "$variant_rpi_sha" "$alpine_arm64_sha" "$variant_alpine_arm64_sha")
           echo $flag
+          echo "FLAG=$flag" >> $GITHUB_ENV
   # images:
   #   strategy:
   #     fail-fast: false
