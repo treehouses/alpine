@@ -7,7 +7,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [amd64]
+        arch: [amd64, arm, arm64]
     runs-on: ubuntu-latest
 
     steps:
