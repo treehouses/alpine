@@ -62,9 +62,9 @@ jobs:
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
       
       - name: Build docker image
+        if: ${{ needs.compare.outputs.flag }}
         id: set-build
         run: |
-          echo ${{ needs.compare.outputs.flag }}
           export DOCKER_CLI_EXPERIMENTAL=enabled
           echo "**************0*************"
           version="3.12"
@@ -105,8 +105,9 @@ jobs:
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
           echo ${{ needs.images.outputs.build }}
       - name: Deploying manifest to Github Packages
+        if: ${{ needs.images.outputs.build }}
         run: |
-          echo ${{ needs.images.outputs.build }}
+          echo 
           repo="${{ matrix.registry }}/rjpadilla/alpine"
           date="$(date +%Y%m%d%H%M)"
           docker manifest create $repo:latest $repo-tags:amd64 $repo-tags:arm $repo-tags:arm64
