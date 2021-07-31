@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        outputs:
+          flag: ${{ steps.set-flag.outputs.flag }}
             
       - name: Log in to the Container registries
         run: |
@@ -19,7 +21,7 @@ jobs:
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
       - name: Compare images for changes
-        id: sha
+        id: set-flag
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
           source .github/workflows/utils.sh
@@ -37,7 +39,7 @@ jobs:
           echo "base sha is $basesha"
           reposha=$(docker inspect --format='{{index .RepoDigests 0}}' "$repo" 2>/dev/null | cut -d @ -f 2) 
           echo "repo sha is $reposha"
-          [[ $basesha = $reposha ]] && echo "::set-output name=flag::false" && echo " no changes" || echo "::set-output name=flag::true" && echo "changes"
+          [[ $basesha = $reposha ]] && echo "::set-output name=flag::false" || echo "::set-output name=flag::true" 
           # [[ $basesha = $reposha ]] && echo "no changes" || echo "FLAG=true" >> $GITHUB_ENV; echo "changes"
           # [[ $basesha != $reposha ]] && echo "changes" || echo "no changes"
 
