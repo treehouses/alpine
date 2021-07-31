@@ -99,6 +99,7 @@ jobs:
         run: |
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+          echo ${{ needs.compare.outputs.flag }}
       - name: Deploying manifest to Github Packages
         run: |
           echo ${{ needs.compare.outputs.flag }}
