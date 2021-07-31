@@ -14,29 +14,30 @@ jobs:
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
-      - name: Build docker image
+      - name: Compare images for changes
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
           source .github/workflows/utils.sh
-          docker run --privileged --rm docker/binfmt:a7996909642ee92942dcd6cff44b9b95f08dad64
           version="3.12"
           repo="rjpadilla/alpine"
-          alpine_x86_sha=$(get_variant_sha "alpine" "$version" "amd64")
-          echo $alpine_x86_sha
-          variant_alpine_x86_sha=$(get_manifest_sha "$repo:latest" "amd64")
-          echo $variant_alpine_x86_sha
+          base="alpine"
+          echo "amd64"
+          baseamd64=$(get_variant_sha "$base" "$version" "amd64")
+          echo $baseamd64
+          repoamd64=$(get_manifest_sha "$repo:latest" "amd64")
+          echo $repoamd64
           echo "arm"
-          balena_rpi_sha=$(get_tag_sha "balenalib/raspberry-pi-alpine" "$version")
-          echo $balena_rpi_sha
-          variant_rpi_sha=$(get_manifest_sha "$repo:latest" "arm")
-          echo $variant_rpi_sha
+          basearm=$(get_tag_sha "balenalib/raspberry-pi-alpine" "$version")
+          echo $basearm
+          repoarm=$(get_manifest_sha "$repo:latest" "arm")
+          echo $repoarm
           echo "arm64"
-          alpine_arm64_sha=$(get_variant_sha "alpine" "$version" "arm64")
-          echo $alpine_arm64_sha
-          variant_alpine_arm64_sha=$(get_manifest_sha "$repo:latest" "arm64")
-          echo $variant_alpine_arm64_sha
+          basearm64=$(get_variant_sha "$base" "$version" "arm64")
+          echo $basearm64
+          repoarm64=$(get_manifest_sha "$repo:latest" "arm64")
+          echo $repoarm64
           echo "change"
-          flag=$(compare_sha  "$alpine_x86_sha" "$variant_alpine_x86_sha" "$balena_rpi_sha" "$variant_rpi_sha" "$alpine_arm64_sha" "$variant_alpine_arm64_sha")
+          flag=$(compare_sha "$baseamd64" "$repoamd64" "$basearm" "$repoarm" "$basearm64" "$repoarm64")
           echo $flag
           echo "FLAG=$flag" >> $GITHUB_ENV
 
