@@ -26,8 +26,6 @@ jobs:
           echo $baseamd64
           repoamd64=$(get_manifest_sha "$repo:latest" "amd64")
           echo $repoamd64
-      - name: Do variables carry over from steps???
-        run: |
           echo "arm"
           basearm=$(get_tag_sha "balenalib/raspberry-pi-alpine" "$version")
           echo $basearm
