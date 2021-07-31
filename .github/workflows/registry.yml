@@ -19,6 +19,7 @@ jobs:
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
       - name: Compare images for changes
+        id: sha
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
           source .github/workflows/utils.sh
@@ -36,9 +37,9 @@ jobs:
           echo "base sha is $basesha"
           reposha=$(docker inspect --format='{{index .RepoDigests 0}}' "$repo" 2>/dev/null | cut -d @ -f 2) 
           echo "repo sha is $reposha"
-          [[ $basesha = $reposha ]] && echo "no changes" || echo "FLAG=true" >> $GITHUB_ENV; echo "changes"
+          [[ $basesha = $reposha ]] && echo "::set-output name=flag::false"; echo " no changes" || echo "::set-output name=flag::true"; echo "changes"
+          # [[ $basesha = $reposha ]] && echo "no changes" || echo "FLAG=true" >> $GITHUB_ENV; echo "changes"
           # [[ $basesha != $reposha ]] && echo "changes" || echo "no changes"
-          env
 
   images:
     needs: compare
@@ -52,10 +53,10 @@ jobs:
         run: |
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
-          echo ${{ env.FLAG }}
+          echo ${{ needs.compare.outputs.flag }}
       
       - name: Build docker image
-        if: ${{ env.FLAG }}
+        if: ${{ needs.compare.outputs.flag }}
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
           docker run --privileged --rm docker/binfmt:a7996909642ee92942dcd6cff44b9b95f08dad64
@@ -91,7 +92,7 @@ jobs:
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
       - name: Deploying manifest to Github Packages
-        if: ${{ env.FLAG }}
+        if: ${{ needs.compare.outputs.flag }}
         run: |
           repo="${{ matrix.registry }}/rjpadilla/alpine"
           date="$(date +%Y%m%d%H%M)"
