@@ -100,8 +100,8 @@ jobs:
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
       - name: Deploying manifest to Github Packages
-        if: ${{ needs.compare.outputs.flag }}
         run: |
+          echo ${{ needs.compare.outputs.flag }}
           repo="${{ matrix.registry }}/rjpadilla/alpine"
           date="$(date +%Y%m%d%H%M)"
           docker manifest create $repo:latest $repo-tags:amd64 $repo-tags:arm $repo-tags:arm64
