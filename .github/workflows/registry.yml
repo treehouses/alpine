@@ -46,6 +46,8 @@ jobs:
   images:
     needs: compare
     runs-on: ubuntu-latest
+    outputs:
+      build: ${{ steps.set-build.outputs.build }}
     strategy:
       fail-fast: false
       matrix:
@@ -60,6 +62,7 @@ jobs:
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
       
       - name: Build docker image
+        id: set-build
         run: |
           echo ${{ needs.compare.outputs.flag }}
           export DOCKER_CLI_EXPERIMENTAL=enabled
@@ -86,6 +89,7 @@ jobs:
           docker push ghcr.io/$repo-$date
           docker push docker.io/$repo-$date
           docker images
+          echo "::set-output name=build::true"
 
   manifests:
     needs: images
@@ -99,10 +103,10 @@ jobs:
         run: |
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
-          echo ${{ needs.compare.outputs.flag }}
+          echo ${{ needs.images.outputs.build }}
       - name: Deploying manifest to Github Packages
         run: |
-          echo ${{ needs.compare.outputs.flag }}
+          echo ${{ needs.images.outputs.build }}
           repo="${{ matrix.registry }}/rjpadilla/alpine"
           date="$(date +%Y%m%d%H%M)"
           docker manifest create $repo:latest $repo-tags:amd64 $repo-tags:arm $repo-tags:arm64
