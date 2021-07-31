@@ -36,7 +36,7 @@ jobs:
           echo "base sha is $basesha"
           reposha=$(docker inspect --format='{{index .RepoDigests 0}}' "$repo")
           echo "repo sha is $reposha"
-          [[ $basesha = $reposha ]] && echo "FLAG=true" >> $GITHUB_ENV || echo "no changes"
+          [[ $basesha != $reposha ]] && echo "FLAG=true" >> $GITHUB_ENV; echo "changes" || echo "no changes"
 
   images:
     needs: compare
