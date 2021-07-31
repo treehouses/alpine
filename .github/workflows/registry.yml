@@ -5,6 +5,8 @@ on: [push]
 jobs:
   compare:
     runs-on: ubuntu-latest
+    outputs:
+      flag: ${{ steps.set-flag.outputs.flag }}
     strategy:
       fail-fast: false
       matrix:
@@ -12,8 +14,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-        outputs:
-          flag: ${{ steps.set-flag.outputs.flag }}
             
       - name: Log in to the Container registries
         run: |
