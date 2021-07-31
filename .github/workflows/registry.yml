@@ -41,6 +41,8 @@ jobs:
           echo "FLAG=$flag" >> $GITHUB_ENV
 
   images:
+    needs: compare
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
