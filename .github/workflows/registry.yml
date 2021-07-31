@@ -36,12 +36,8 @@ jobs:
           docker pull -q $base &>/dev/null
           docker pull -q $repo &>/dev/null
           basesha=$(docker inspect --format='{{index .RepoDigests 0}}' "$base" 2>/dev/null | cut -d @ -f 2)
-          echo "base sha is $basesha"
           reposha=$(docker inspect --format='{{index .RepoDigests 0}}' "$repo" 2>/dev/null | cut -d @ -f 2) 
-          echo "repo sha is $reposha"
-          [[ $basesha != $reposha ]] && echo "::set-output name=flag::true" || echo "no changes" 
-          # [[ $basesha = $reposha ]] && echo "no changes" || echo "FLAG=true" >> $GITHUB_ENV; echo "changes"
-          # [[ $basesha != $reposha ]] && echo "changes" || echo "no changes"
+          [[ $basesha = $reposha ]] && echo "::set-output name=flag::true" || echo "no changes" 
 
   images:
     needs: compare
