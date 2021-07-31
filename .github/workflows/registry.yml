@@ -70,6 +70,8 @@ jobs:
           image="$_"
           repo="rjpadilla/alpine-tags:${{ matrix.arch }}"
           date="$(date +%Y%m%d%H%M)"
+          echo "repo=$repo"
+          echo "image=$image"
           echo "**************1*************"
           docker build -t ghcr.io/$repo --build-arg IMAGE=$image . 
           echo "**************2*************"
