@@ -51,6 +51,9 @@ jobs:
       matrix:
         arch: [amd64, arm, arm64]
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       - name: Log in to the Container registries
         run: |
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
