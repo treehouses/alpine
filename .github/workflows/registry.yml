@@ -38,8 +38,6 @@ jobs:
           basesha=$(docker inspect --format='{{index .RepoDigests 0}}' "$base" 2>/dev/null | cut -d @ -f 2)
           reposha=$(docker inspect --format='{{index .RepoDigests 0}}' "$repo" 2>/dev/null | cut -d @ -f 2) 
           [[ $basesha != $reposha ]] && echo "::set-output name=flag::true" || echo "no changes" 
-          flag=true
-          echo "FLAG=$flag" >> GITHUB_ENV
   images:
     needs: compare
     runs-on: ubuntu-latest
@@ -97,7 +95,6 @@ jobs:
         run: |
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
-          echo "echoing the FLAG: ${{ env.FLAG }}"
 
       - name: Deploying manifest to Container Registries
         if: ${{ needs.images.outputs.build }}
