@@ -60,7 +60,6 @@ jobs:
         run: |
           echo ${{ needs.compare.outputs.flag }}
           export DOCKER_CLI_EXPERIMENTAL=enabled
-          docker run --privileged --rm docker/binfmt:a7996909642ee92942dcd6cff44b9b95f08dad64
           echo "**************0*************"
           version="3.12"
           case ${{ matrix.arch }} in
