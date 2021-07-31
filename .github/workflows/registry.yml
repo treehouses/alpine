@@ -5,6 +5,10 @@ on: [push]
 jobs:
   compare:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [amd64, arm, arm64]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -19,27 +23,20 @@ jobs:
           export DOCKER_CLI_EXPERIMENTAL=enabled
           source .github/workflows/utils.sh
           version="3.12"
-          repo="rjpadilla/alpine"
-          base="alpine"
-          echo "amd64"
-          baseamd64=$(get_variant_sha "$base" "$version" "amd64")
-          echo $baseamd64
-          repoamd64=$(get_manifest_sha "$repo:latest" "amd64")
-          echo $repoamd64
-          echo "arm"
-          basearm=$(get_tag_sha "balenalib/raspberry-pi-alpine" "$version")
-          echo $basearm
-          repoarm=$(get_manifest_sha "$repo:latest" "arm")
-          echo $repoarm
-          echo "arm64"
-          basearm64=$(get_variant_sha "$base" "$version" "arm64")
-          echo $basearm64
-          repoarm64=$(get_manifest_sha "$repo:latest" "arm64")
-          echo $repoarm64
-          echo "change"
-          flag=$(compare_sha "$baseamd64" "$repoamd64" "$basearm" "$repoarm" "$basearm64" "$repoarm64")
-          echo $flag
-          echo "FLAG=$flag" >> $GITHUB_ENV
+          repo="rjpadilla/alpine-tags:${{ matrix.arch }}"
+          case ${{ matrix.arch }} in
+            amd64) : "amd64/alpine:$version" ;;
+            arm) : "balenalib/raspberry-pi-alpine:$version" ;;
+            arm64) : "arm64v8/alpine:$version" ;;
+          esac
+          base="$_"
+          docker pull -q $base &>/dev/null
+          docker pull -q $repo &>/dev/null
+          basesha=$(docker inspect --format='{{index .RepoDigests 0}}' "$base")
+          echo "base sha is $basesha"
+          reposha=$(docker inspect --format='{{index .RepoDigests 0}}' "$repo")
+          echo "repo sha is $reposha"
+          [[ $basesha = $reposha ]] && echo "FLAG=true" >> $GITHUB_ENV || echo "no changes"
 
   images:
     needs: compare
