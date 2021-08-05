@@ -1,8 +1,16 @@
-name: publish
+name: build on change
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
+      - main
+  workflow_dispatch:
+  repository_dispatch:
+    types: alpine
 
 jobs:
+
   compare:
     runs-on: ubuntu-latest
     outputs:
@@ -13,20 +21,18 @@ jobs:
         arch: [amd64, arm, arm64]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-            
+        uses: actions/checkout@v2   
       - name: Log in to the Container registries
         run: |
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
-
       - name: Compare images for changes
         id: set-flag
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
           source .github/workflows/utils.sh
           version="3.12"
-          repo="rjpadilla/alpine-tags:${{ matrix.arch }}"
+          repo="treehouses/alpine-tags:${{ matrix.arch }}"
           case ${{ matrix.arch }} in
             amd64) : "amd64/alpine:$version" ;;
             arm) : "balenalib/raspberry-pi-alpine:$version" ;;
@@ -37,7 +43,8 @@ jobs:
           docker pull -q $repo &>/dev/null
           basesha=$(docker inspect --format='{{index .RepoDigests 0}}' "$base" 2>/dev/null | cut -d @ -f 2)
           reposha=$(docker inspect --format='{{index .RepoDigests 0}}' "$repo" 2>/dev/null | cut -d @ -f 2) 
-          [[ $basesha != $reposha ]] && echo "::set-output name=flag::true" || echo "no changes" 
+          [[ $basesha != $reposha ]] && echo "::set-output name=flag::true" || echo "no changes"
+
   images:
     needs: compare
     runs-on: ubuntu-latest
@@ -50,18 +57,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
       - name: Log in to the Container registries
         run: |
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
-      
       - name: Build docker image
         if: ${{ needs.compare.outputs.flag }}
         id: set-build
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
-          echo "**************0*************"
           version="3.12"
           case ${{ matrix.arch }} in
             amd64) : "amd64/alpine:$version" ;;
@@ -69,7 +73,7 @@ jobs:
             arm64) : "arm64v8/alpine:$version" ;;
           esac
           image="$_"
-          repo="rjpadilla/alpine-tags:${{ matrix.arch }}"
+          repo="treehouses/alpine-tags:${{ matrix.arch }}"
           date="$(date +%Y%m%d%H%M)"
           docker build -t ghcr.io/$repo --build-arg IMAGE=$image . 
           docker tag ghcr.io/$repo docker.io/$repo
@@ -90,16 +94,14 @@ jobs:
         registry: [docker.io, ghcr.io]
     runs-on: ubuntu-latest
     steps:
-
       - name: Log in to the Container registries
         run: |
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
-
       - name: Deploying manifest to Container Registries
         if: ${{ needs.images.outputs.build }}
         run: |
-          repo="${{ matrix.registry }}/rjpadilla/alpine"
+          repo="${{ matrix.registry }}/treehouses/alpine"
           date="$(date +%Y%m%d%H%M)"
           docker manifest create $repo:latest $repo-tags:amd64 $repo-tags:arm $repo-tags:arm64
           docker manifest create $repo:$date $repo-tags:amd64 $repo-tags:arm $repo-tags:arm64
