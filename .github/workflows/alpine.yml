@@ -20,13 +20,13 @@ jobs:
       matrix:
         arch: [amd64, arm, arm64]
     steps:
-      - name: Checkout repository
+      - name: checkout repository
         uses: actions/checkout@v2   
-      - name: Log in to the Container registries
+      - name: container registries
         run: |
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
-      - name: Compare images for changes
+      - name: compare image
         id: set-flag
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
@@ -55,13 +55,13 @@ jobs:
       matrix:
         arch: [amd64, arm, arm64]
     steps:
-      - name: Checkout repository
+      - name: checkout repository
         uses: actions/checkout@v2
-      - name: Log in to the Container registries
+      - name: container registries
         run: |
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
-      - name: Build docker image
+      - name: docker image
         if: ${{ needs.compare.outputs.flag }}
         id: set-build
         run: |
@@ -94,11 +94,11 @@ jobs:
         registry: [docker.io, ghcr.io]
     runs-on: ubuntu-latest
     steps:
-      - name: Log in to the Container registries
+      - name: container registries
         run: |
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
-      - name: Deploying manifest to Container Registries
+      - name: create manifests
         if: ${{ needs.images.outputs.build }}
         run: |
           repo="${{ matrix.registry }}/treehouses/alpine"
