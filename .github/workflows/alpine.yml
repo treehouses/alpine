@@ -30,7 +30,6 @@ jobs:
         id: set-flag
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
-          source .github/workflows/utils.sh
           version="3.12"
           repo="treehouses/alpine-tags:${{ matrix.arch }}"
           case ${{ matrix.arch }} in
