@@ -30,7 +30,6 @@ jobs:
         id: set-flag
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
-          source .github/workflows/utils.sh
           version="3.12"
           repo="treehouses/alpine-tags:${{ matrix.arch }}"
           case ${{ matrix.arch }} in
@@ -110,3 +109,5 @@ jobs:
           docker manifest inspect $repo:latest
           docker manifest push $repo:latest
           docker manifest push $repo:$date
+          echo "https://hub.docker.com/r/treehouses/alpine/tags"
+          [[ ${{ matrix.registry }} == "docker.io" ]] && treehouses feedback "new treehouses/alpine check https://hub.docker.com/r/treehouses/alpine/tags"
