@@ -1,13 +1,7 @@
 name:  build by force
 
 on:
-  #push:
-  #  branches:
-  #    - master
-  #    - main
   workflow_dispatch:
-  #repository_dispatch:
-  #  types: alpine
 
 jobs:
 
