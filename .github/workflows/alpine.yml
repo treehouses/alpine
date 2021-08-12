@@ -40,9 +40,10 @@ jobs:
           base="$_"
           docker pull -q $base &>/dev/null
           docker pull -q $repo &>/dev/null
-          basesha=$(docker inspect --format='{{index .RepoDigests 0}}' "$base" 2>/dev/null | cut -d @ -f 2)
-          reposha=$(docker inspect --format='{{index .RepoDigests 0}}' "$repo" 2>/dev/null | cut -d @ -f 2) 
-          [[ $basesha != $reposha ]] && echo "::set-output name=flag::true" || echo "no changes"
+          basesha=$(docker image inspect $base | jq --raw-output '.[0].RootFS.Layers|.[]')
+          reposha=$(docker image inspect $repo | jq --raw-output '.[0].RootFS.Layers|.[]')
+          echo "base sha:$basesha repo sha:$reposha"
+          [[ $reposha == *$basesha* ]] && echo "no changes" || echo "::set-output name=flag::true"
 
   images:
     needs: compare
