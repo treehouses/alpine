@@ -43,10 +43,8 @@ jobs:
           docker tag ghcr.io/$repo docker.io/$repo
           docker tag ghcr.io/$repo ghcr.io/$repo-$date
           docker tag docker.io/$repo docker.io/$repo-$date
-          docker push ghcr.io/$repo
-          docker push docker.io/$repo
-          docker push ghcr.io/$repo-$date
-          docker push docker.io/$repo-$date
+          docker push ghcr.io/$repo --all-tags
+          docker push docker.io/$repo --all-tags
           docker images
           echo "::set-output name=build::true"
 
@@ -67,6 +65,8 @@ jobs:
         run: |
           repo="${{ matrix.registry }}/treehouses/alpine"
           date="$(date +%Y%m%d%H%M)"
+          sudo npm install -g @treehouses/cli
+          export gitter_channel="${{ secrets.CHANNEL }}"
           docker manifest create $repo:latest $repo-tags:amd64 $repo-tags:arm $repo-tags:arm64
           docker manifest create $repo:$date $repo-tags:amd64 $repo-tags:arm $repo-tags:arm64
           docker manifest annotate $repo:latest $repo-tags:arm --os linux --arch arm 
@@ -74,3 +74,5 @@ jobs:
           docker manifest inspect $repo:latest
           docker manifest push $repo:latest
           docker manifest push $repo:$date
+          echo "https://hub.docker.com/r/treehouses/alpine/tags"
+          [[ ${{ matrix.registry }} == "docker.io" ]] && treehouses feedback "new treehouses/alpine check https://hub.docker.com/r/treehouses/alpine/tags"
