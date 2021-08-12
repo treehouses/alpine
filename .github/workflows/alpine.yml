@@ -5,7 +5,6 @@ on:
     branches:
       - master
       - main
-      - compare-refactor
   workflow_dispatch:
   repository_dispatch:
     types: alpine
