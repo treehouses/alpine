@@ -79,8 +79,10 @@ jobs:
           docker tag ghcr.io/$repo docker.io/$repo
           docker tag ghcr.io/$repo ghcr.io/$repo-$date
           docker tag docker.io/$repo docker.io/$repo-$date
-          docker push ghcr.io/$repo --all-tags
-          docker push docker.io/$repo --all-tags
+          docker push ghcr.io/$repo
+          docker push docker.io/$repo
+          docker push ghcr.io/$repo-$date
+          docker push docker.io/$repo-$date
           docker images
           echo "::set-output name=build::true"
 
