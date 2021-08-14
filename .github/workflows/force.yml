@@ -58,6 +58,8 @@ jobs:
       - name: create manifests
         if: ${{ needs.images.outputs.build }}
         run: |
+          sudo npm install -g @treehouses/cli
+          export gitter_channel="${{ secrets.CHANNEL }}"
           repo="${{ matrix.registry }}/treehouses/alpine"
           date="$(date +%Y%m%d%H%M)"
           docker manifest create $repo:latest $repo-tags:amd64 $repo-tags:arm $repo-tags:arm64
@@ -67,16 +69,16 @@ jobs:
           docker manifest inspect $repo:latest
           docker manifest push $repo:latest
           docker manifest push $repo:$date
+          case ${{ matrix.registry }} in
+            docker.io) 
+              echo "https://hub.docker.com/r/treehouses/alpine/tags"
+              treehouses feedback "new treehouses/alpine check https://hub.docker.com/r/treehouses/alpine/tags"
+            ;;
+            ghcr.io) 
+              echo "https://github.com/treehouses/alpine/pkgs/container/alpine"
+              treehouses feedback "new treehouses/alpine check https://github.com/treehouses/alpine/pkgs/container/alpine"
+            ;;
+          esac
         
-  message:
-    needs: manifests
-    runs-on: ubuntu-latest
-    steps:
-      - name: message chat of new image
-        run: |
-          sudo npm install -g @treehouses/cli
-          export gitter_channel="${{ secrets.CHANNEL }}"
-          echo "https://hub.docker.com/r/treehouses/alpine/tags"
-          treehouses feedback "new treehouses/alpine check https://hub.docker.com/r/treehouses/alpine/tags"
 
 
