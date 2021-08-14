@@ -51,7 +51,7 @@ jobs:
         registry: [docker.io, ghcr.io]
     runs-on: ubuntu-latest
     outputs:
-      push: ${{ steps.set-send.outputs.send }}
+      send: ${{ steps.set-send.outputs.send }}
     steps:
       - name: container registries
         run: |
