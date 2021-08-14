@@ -76,7 +76,7 @@ jobs:
             ;;
             ghcr.io) 
               echo "https://github.com/treehouses/alpine/pkgs/container/alpine"
-              treehouses feedback "new treehouses/alpine check https://github.com/treehouses/alpine/pkgs/container/alpine"
+              #treehouses feedback "new treehouses/alpine check https://github.com/treehouses/alpine/pkgs/container/alpine"
             ;;
           esac
         
