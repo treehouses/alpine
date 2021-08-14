@@ -32,12 +32,12 @@ jobs:
           esac
           image="$_"
           repo="treehouses/alpine-tags"
-          repoTag="$repo:${{ matrix.arch }}"
+          dest="$repo:${{ matrix.arch }}"
           date="$(date +%Y%m%d%H%M)"
-          docker build -t ghcr.io/$repoTag --build-arg IMAGE=$image . 
-          docker tag ghcr.io/$repoTag docker.io/$repoTag
-          docker tag ghcr.io/$repoTag ghcr.io/$repoTag-$date
-          docker tag docker.io/$repoTag docker.io/$repoTag-$date
+          docker build -t ghcr.io/$dest --build-arg IMAGE=$image . 
+          docker tag ghcr.io/$repoTag docker.io/$dest
+          docker tag ghcr.io/$repoTag ghcr.io/$dest-$date
+          docker tag docker.io/$repoTag docker.io/$dest-$date
           docker push --all-tags ghcr.io/$repo
           docker push --all-tags docker.io/$repo
           docker images
