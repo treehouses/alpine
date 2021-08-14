@@ -50,6 +50,8 @@ jobs:
       matrix:
         registry: [docker.io, ghcr.io]
     runs-on: ubuntu-latest
+    outputs:
+      send: ${{ steps.set-send.outputs.send }}
     steps:
       - name: container registries
         run: |
@@ -57,9 +59,8 @@ jobs:
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
       - name: create manifests
         if: ${{ needs.images.outputs.build }}
+        id: set-send
         run: |
-          sudo npm install -g @treehouses/cli
-          export gitter_channel="${{ secrets.CHANNEL }}"
           repo="${{ matrix.registry }}/treehouses/alpine"
           date="$(date +%Y%m%d%H%M)"
           docker manifest create $repo:latest $repo-tags:amd64 $repo-tags:arm $repo-tags:arm64
@@ -69,8 +70,17 @@ jobs:
           docker manifest inspect $repo:latest
           docker manifest push $repo:latest
           docker manifest push $repo:$date
+          echo "::set-output name=send::true"
+
+  message:
+    needs: manifests
+    runs-on: ubuntu-latest
+    steps:
+      - name: message chat of new image
+        if: ${{ needs.manifests.outputs.send }}
+        run: |
+          sudo npm install -g @treehouses/cli
+          export gitter_channel="${{ secrets.CHANNEL }}"
           echo "https://hub.docker.com/r/treehouses/alpine/tags"
-          [[ ${{ matrix.registry }} == "docker.io" ]] && treehouses feedback "new treehouses/alpine check https://hub.docker.com/r/treehouses/alpine/tags" || echo "https://github.com/treehouses/alpine/pkgs/container/alpine"
-        
-
-
+          echo "https://github.com/treehouses/alpine/pkgs/container/alpine"
+          treehouses feedback "new treehouses/alpine check https://hub.docker.com/r/treehouses/alpine/tags or https://github.com/treehouses/alpine/pkgs/container/alpine"
