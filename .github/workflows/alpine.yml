@@ -13,6 +13,7 @@ jobs:
 
   compare:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' }}
     outputs:
       flag: ${{ steps.set-flag.outputs.flag }}
     strategy:
@@ -46,6 +47,7 @@ jobs:
           [[ $reposha == *$basesha* ]] && echo "no changes" || echo "::set-output name=flag::true"
 
   images:
+    if: ${{ always() }}
     needs: compare
     runs-on: ubuntu-latest
     outputs:
@@ -62,7 +64,7 @@ jobs:
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
       - name: docker image
-        if: ${{ needs.compare.outputs.flag }}
+        if: ${{ needs.compare.outputs.flag || github.event_name == 'workflow_dispatch' }}
         id: set-build
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
