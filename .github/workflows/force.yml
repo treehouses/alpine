@@ -31,16 +31,15 @@ jobs:
             arm64) : "arm64v8/alpine:$version" ;;
           esac
           image="$_"
-          repo="treehouses/alpine-tags:${{ matrix.arch }}"
+          repo="treehouses/alpine-tags"
+          dest="$repo:${{ matrix.arch }}"
           date="$(date +%Y%m%d%H%M)"
-          docker build -t ghcr.io/$repo --build-arg IMAGE=$image . 
-          docker tag ghcr.io/$repo docker.io/$repo
-          docker tag ghcr.io/$repo ghcr.io/$repo-$date
-          docker tag docker.io/$repo docker.io/$repo-$date
-          docker push ghcr.io/$repo
-          docker push docker.io/$repo
-          docker push ghcr.io/$repo-$date
-          docker push docker.io/$repo-$date
+          docker build -t ghcr.io/$dest --build-arg IMAGE=$image . 
+          docker tag ghcr.io/$dest docker.io/$dest
+          docker tag ghcr.io/$dest ghcr.io/$dest-$date
+          docker tag docker.io/$dest docker.io/$dest-$date
+          docker push --all-tags ghcr.io/$repo
+          docker push --all-tags docker.io/$repo
           docker images
           echo "::set-output name=build::true"
 
@@ -59,10 +58,10 @@ jobs:
       - name: create manifests
         if: ${{ needs.images.outputs.build }}
         run: |
-          repo="${{ matrix.registry }}/treehouses/alpine"
-          date="$(date +%Y%m%d%H%M)"
           sudo npm install -g @treehouses/cli
           export gitter_channel="${{ secrets.CHANNEL }}"
+          repo="${{ matrix.registry }}/treehouses/alpine"
+          date="$(date +%Y%m%d%H%M)"
           docker manifest create $repo:latest $repo-tags:amd64 $repo-tags:arm $repo-tags:arm64
           docker manifest create $repo:$date $repo-tags:amd64 $repo-tags:arm $repo-tags:arm64
           docker manifest annotate $repo:latest $repo-tags:arm --os linux --arch arm 
@@ -71,4 +70,7 @@ jobs:
           docker manifest push $repo:latest
           docker manifest push $repo:$date
           echo "https://hub.docker.com/r/treehouses/alpine/tags"
-          [[ ${{ matrix.registry }} == "docker.io" ]] && treehouses feedback "new treehouses/alpine check https://hub.docker.com/r/treehouses/alpine/tags"
+          [[ ${{ matrix.registry }} == "docker.io" ]] && treehouses feedback "new treehouses/alpine check https://hub.docker.com/r/treehouses/alpine/tags" || echo "https://github.com/treehouses/alpine/pkgs/container/alpine"
+        
+
+
