@@ -69,16 +69,8 @@ jobs:
           docker manifest inspect $repo:latest
           docker manifest push $repo:latest
           docker manifest push $repo:$date
-          case ${{ matrix.registry }} in
-            docker.io) 
-              echo "https://hub.docker.com/r/treehouses/alpine/tags"
-              treehouses feedback "new treehouses/alpine check https://hub.docker.com/r/treehouses/alpine/tags"
-            ;;
-            ghcr.io) 
-              echo "https://github.com/treehouses/alpine/pkgs/container/alpine"
-              #treehouses feedback "new treehouses/alpine check https://github.com/treehouses/alpine/pkgs/container/alpine"
-            ;;
-          esac
+          echo "https://hub.docker.com/r/treehouses/alpine/tags"
+          [[ ${{ matrix.registry }} == "docker.io" ]] && treehouses feedback "new treehouses/alpine check https://hub.docker.com/r/treehouses/alpine/tags" || echo "https://github.com/treehouses/alpine/pkgs/container/alpine"
         
 
 
