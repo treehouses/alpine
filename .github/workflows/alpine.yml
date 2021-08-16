@@ -44,7 +44,7 @@ jobs:
           reposha=$(docker image inspect $repo | jq --raw-output '.[0].RootFS.Layers|.[]')
           echo "base sha:$basesha repo sha:$reposha"
           [[ $reposha == *$basesha* ]] && echo "no changes" || echo "::set-output name=flag::true"
-          ${{ github.event.name  != 'workflow_dispatch' }} &&  echo $? ||  echo "::set-output name=flag::true" 
+          ${{ github.event.name  == 'workflow_dispatch' }} && echo "::set-output name=flag::true" || echo $? 
 
   images:
     needs: compare
