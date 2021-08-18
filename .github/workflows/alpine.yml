@@ -7,10 +7,15 @@ on:
       - main
   workflow_dispatch:
     inputs:
-      buildtype:
-        description: 'Method to build image'
+      force:
+        description: 'Build by force'
         required: true
         default: 'force'
+      change:
+        description: 'Build on change'
+        required: true
+        default: 'change'
+      
   repository_dispatch:
     types: alpine
 
