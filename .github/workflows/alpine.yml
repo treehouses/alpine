@@ -26,7 +26,7 @@ jobs:
         arch: [amd64, arm, arm64]
     steps:
       - name: checkout repository
-        uses: actions/checkout@v2   
+        uses: actions/checkout@v2
       - name: container registries
         run: |
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
@@ -82,7 +82,7 @@ jobs:
           repo="treehouses/alpine-tags"
           dest="$repo:${{ matrix.arch }}"
           date="$(date +%Y%m%d%H%M)"
-          docker build -t ghcr.io/$dest --build-arg IMAGE=$image . 
+          docker build -t ghcr.io/$dest --build-arg IMAGE=$image .
           docker tag ghcr.io/$dest docker.io/$dest
           docker tag ghcr.io/$dest ghcr.io/$dest-$date
           docker tag docker.io/$dest docker.io/$dest-$date
@@ -90,7 +90,7 @@ jobs:
           docker push --all-tags docker.io/$repo
           docker images
           echo "::set-output name=build::true"
-          
+
   manifests:
     needs: images
     strategy:
@@ -119,7 +119,7 @@ jobs:
           docker manifest push $repo:latest
           docker manifest push $repo:$date
           echo "::set-output name=send::true"
-  
+
   message:
     needs: manifests
     runs-on: ubuntu-latest
