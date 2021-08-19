@@ -1,4 +1,4 @@
-name: build on change
+name: build image
 
 on:
   push:
@@ -6,6 +6,11 @@ on:
       - master
       - main
   workflow_dispatch:
+    inputs:
+      buildtype:
+        description: 'Build by "force" or on "change"'
+        required: true
+        default: 'force'
   repository_dispatch:
     types: alpine
 
@@ -43,6 +48,7 @@ jobs:
           basesha=$(docker image inspect $base | jq --raw-output '.[0].RootFS.Layers|.[]')
           reposha=$(docker image inspect $repo | jq --raw-output '.[0].RootFS.Layers|.[]')
           echo "base sha:$basesha repo sha:$reposha"
+          ${{ github.event.inputs.buildtype  == 'force' }} && echo "::set-output name=flag::true" || echo "building on change" 
           [[ $reposha == *$basesha* ]] && echo "no changes" || echo "::set-output name=flag::true"
 
   images:
