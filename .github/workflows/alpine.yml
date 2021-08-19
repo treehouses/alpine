@@ -1,4 +1,4 @@
-name: build on change
+name: build image
 
 on:
   push:
