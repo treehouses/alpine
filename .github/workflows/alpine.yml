@@ -35,7 +35,7 @@ jobs:
         id: set-flag
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
-          version="3.12"
+          version="3.13"
           repo="treehouses/alpine-tags:${{ matrix.arch }}"
           case ${{ matrix.arch }} in
             amd64) : "amd64/alpine:$version" ;;
@@ -72,7 +72,7 @@ jobs:
         id: set-build
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
-          version="3.12"
+          version="3.13"
           case ${{ matrix.arch }} in
             amd64) : "amd64/alpine:$version" ;;
             arm) : "balenalib/raspberry-pi-alpine:$version" ;;
@@ -82,7 +82,7 @@ jobs:
           repo="treehouses/alpine-tags"
           dest="$repo:${{ matrix.arch }}"
           date="$(date +%Y%m%d%H%M)"
-          docker build -t ghcr.io/$dest --build-arg IMAGE=$image .
+          ${{ matrix.arch == 'arm' }} && docker build -t ghcr.io/$dest --build-arg IMAGE=$image . || docker buildx build --platform ${{ matrix.arch }} -t ghcr.io/$dest --build-arg IMAGE=$image .
           docker tag ghcr.io/$dest docker.io/$dest
           docker tag ghcr.io/$dest ghcr.io/$dest-$date
           docker tag docker.io/$dest docker.io/$dest-$date
@@ -113,8 +113,6 @@ jobs:
           date="$(date +%Y%m%d%H%M)"
           docker manifest create $repo:latest $repo-tags:amd64 $repo-tags:arm $repo-tags:arm64
           docker manifest create $repo:$date $repo-tags:amd64 $repo-tags:arm $repo-tags:arm64
-          docker manifest annotate $repo:latest $repo-tags:arm --os linux --arch arm
-          docker manifest annotate $repo:$date $repo-tags:arm --os linux --arch arm
           docker manifest inspect $repo:latest
           docker manifest push $repo:latest
           docker manifest push $repo:$date
