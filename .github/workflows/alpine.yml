@@ -35,7 +35,7 @@ jobs:
         id: set-flag
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
-          version="3.14"
+          version="3.13"
           repo="treehouses/alpine-tags:${{ matrix.arch }}"
           case ${{ matrix.arch }} in
             amd64) : "amd64/alpine:$version" ;;
@@ -72,7 +72,7 @@ jobs:
         id: set-build
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
-          version="3.14"
+          version="3.13"
           case ${{ matrix.arch }} in
             amd64) : "amd64/alpine:$version" ;;
             arm) : "balenalib/raspberry-pi-alpine:$version" ;;
