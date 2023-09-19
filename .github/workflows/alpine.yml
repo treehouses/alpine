@@ -97,7 +97,6 @@ jobs:
       fail-fast: false
       matrix:
         registry: [docker.io, ghcr.io]
-        version: [3.12, 3.14, 3.16, 3.18]
     runs-on: ubuntu-latest
     outputs:
       send: ${{ steps.set-send.outputs.send }}
