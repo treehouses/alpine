@@ -26,7 +26,7 @@ jobs:
         arch: [amd64, arm, arm64]
     steps:
       - name: checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: container registries
         run: |
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
@@ -62,7 +62,7 @@ jobs:
         arch: [amd64, arm, arm64]
     steps:
       - name: checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: container registries
         run: |
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
