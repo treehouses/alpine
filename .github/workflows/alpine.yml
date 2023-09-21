@@ -34,8 +34,8 @@ jobs:
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
           name="treehouses/alpine"
-          tags=$name"-tags"
-          repo="$tags":${{ matrix.arch }}"
+          tags="$name-tags"
+          repo="$tags:${{ matrix.arch }}"
           #repo="treehouses/alpine-tags:${{ matrix.arch }}-${{ matrix.version }}"
           case ${{ matrix.arch }} in
             amd64) : "amd64/alpine:${{ matrix.version }}" ;;
