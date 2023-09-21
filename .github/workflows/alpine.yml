@@ -86,10 +86,13 @@ jobs:
           dest="$repo:${{ matrix.arch }}"
           date="$(date +%Y%m%d%H%M)"
           docker build -t alpine --build-arg IMAGE=$image .
-          docker tag alpine ghcr.io/$dest
-          docker tag alpine docker.io/$dest
-          docker tag ghcr.io/$dest ghcr.io/$dest-$date
-          docker tag docker.io/$dest docker.io/$dest-$date
+          #for compatilbity reasons
+          if [[ "${{ matrix.version }}" == "3.12" ]]; then
+            docker tag alpine ghcr.io/$dest
+            docker tag alpine docker.io/$dest
+            docker tag alpine ghcr.io/$dest-$date
+            docker tag alpine docker.io/$dest-$date
+          fi
           docker push --all-tags ghcr.io/$repo
           docker push --all-tags docker.io/$repo
           docker images
