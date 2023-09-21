@@ -37,12 +37,12 @@ jobs:
         id: set-flag
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
-          version="3.12"
           repo="treehouses/alpine-tags:${{ matrix.arch }}"
+          #repo="treehouses/alpine-tags:${{ matrix.arch }}-${{ matrix.version }}"
           case ${{ matrix.arch }} in
-            amd64) : "amd64/alpine:$version" ;;
-            arm) : "balenalib/raspberry-pi-alpine:$version" ;;
-            arm64) : "arm64v8/alpine:$version" ;;
+            amd64) : "amd64/alpine:${{ matrix.version }}" ;;
+            arm) : "balenalib/raspberry-pi-alpine:${{ matrix.version }}" ;;
+            arm64) : "arm64v8/alpine:${{ matrix.version }}" ;;
           esac
           base="$_"
           docker pull -q $base &>/dev/null
@@ -76,18 +76,18 @@ jobs:
         id: set-build
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
-          version="3.12"
           case ${{ matrix.arch }} in
-            amd64) : "amd64/alpine:$version" ;;
-            arm) : "balenalib/raspberry-pi-alpine:$version" ;;
-            arm64) : "arm64v8/alpine:$version" ;;
+            amd64) : "amd64/alpine:${{ matrix.version }}" ;;
+            arm) : "balenalib/raspberry-pi-alpine:${{ matrix.version }}" ;;
+            arm64) : "arm64v8/alpine:${{ matrix.version }}" ;;
           esac
           image="$_"
           repo="treehouses/alpine-tags"
           dest="$repo:${{ matrix.arch }}"
           date="$(date +%Y%m%d%H%M)"
-          docker build -t ghcr.io/$dest --build-arg IMAGE=$image .
-          docker tag ghcr.io/$dest docker.io/$dest
+          docker build -t alpine --build-arg IMAGE=$image .
+          docker tag alpine ghcr.io/$dest
+          docker tag alpine docker.io/$dest
           docker tag ghcr.io/$dest ghcr.io/$dest-$date
           docker tag docker.io/$dest docker.io/$dest-$date
           docker push --all-tags ghcr.io/$repo
