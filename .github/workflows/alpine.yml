@@ -24,7 +24,8 @@ jobs:
       fail-fast: false
       matrix:
         arch: [amd64, arm, arm64]
-        os: [3.12, 3.14, 3.16, 3.18]
+        #version: [3.12, 3.14, 3.16, 3.18]
+        version: [3.12]
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
@@ -61,7 +62,8 @@ jobs:
       fail-fast: false
       matrix:
         arch: [amd64, arm, arm64]
-        os: [3.12, 3.14, 3.16, 3.18]
+        #version: [3.12, 3.14, 3.16, 3.18]
+        version: [3.12]
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
@@ -99,7 +101,8 @@ jobs:
       fail-fast: false
       matrix:
         registry: [docker.io, ghcr.io]
-        os: [3.12, 3.14, 3.16, 3.18]
+        #version: [3.12, 3.14, 3.16, 3.18]
+        version: [3.12]
     runs-on: ubuntu-latest
     outputs:
       send: ${{ steps.set-send.outputs.send }}
