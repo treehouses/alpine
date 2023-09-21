@@ -29,15 +29,13 @@ jobs:
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
-      - name: container registries
-        run: |
-          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
-          docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
       - name: compare image
         id: set-flag
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
-          repo="treehouses/alpine-tags:${{ matrix.arch }}"
+          name="treehouses/alpine"
+          tags=$name"-tags"
+          repo="$tags":${{ matrix.arch }}"
           #repo="treehouses/alpine-tags:${{ matrix.arch }}-${{ matrix.version }}"
           case ${{ matrix.arch }} in
             amd64) : "amd64/alpine:${{ matrix.version }}" ;;
