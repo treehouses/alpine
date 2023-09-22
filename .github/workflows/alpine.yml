@@ -26,6 +26,8 @@ jobs:
         arch: [amd64, arm, arm64]
         #version: [3.12, 3.14, 3.16, 3.18]
         version: [3.12]
+    env:
+      name: "treehouses/alpine"
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
@@ -33,7 +35,6 @@ jobs:
         id: set-flag
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
-          name="treehouses/alpine"
           tags="$name-tags"
           repo="$tags:${{ matrix.arch }}"
           #repo="treehouses/alpine-tags:${{ matrix.arch }}-${{ matrix.version }}"
