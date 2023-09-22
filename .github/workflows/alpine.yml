@@ -49,8 +49,9 @@ jobs:
           basesha=$(docker image inspect $base | jq --raw-output '.[0].RootFS.Layers|.[]')
           reposha=$(docker image inspect $repo | jq --raw-output '.[0].RootFS.Layers|.[]')
           echo "base sha:$basesha repo sha:$reposha"
-          ${{ github.event.inputs.buildtype  == 'force' }} && echo "::set-output name=flag::true" || echo "building on change" 
-          [[ $reposha == *$basesha* ]] && echo "no changes" || echo "::set-output name=flag::true"
+          ${{ github.event.inputs.buildtype  == 'force' }} && echo "flag=true" >> $GITHUB_ENV || echo "building on change" 
+          [[ $reposha == *$basesha* ]] && echo "no changes" || echo "flag=true" >> $GITHUB_ENV
+
 
   images:
     needs: compare
@@ -126,7 +127,7 @@ jobs:
           docker manifest inspect $repo:latest
           docker manifest push $repo:latest
           docker manifest push $repo:$date
-          echo "::set-output name=send::true"
+          echo "send=true" >> $GITHUB_ENV
 
   message:
     needs: manifests
