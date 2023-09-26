@@ -127,13 +127,17 @@ jobs:
           export DOCKER_CLI_EXPERIMENTAL=enabled
           tags="$name-tags"
           date="$(date +%Y%m%d%H%M)"
-          docker manifest create $name:latest $tags:amd64 $tags:arm $tags:arm64
-          docker manifest create $name:$date $tags:amd64 $tags:arm $tags:arm64
-          docker manifest annotate $name:latest $tags:arm --os linux --arch arm
-          docker manifest annotate $name:$date $tags:arm --os linux --arch arm
-          docker manifest inspect $name:latest
-          docker manifest push $name:latest
-          docker manifest push $name:$date
+          #for compatilbity reasons
+          if [[ "${{ matrix.version }}" == "3.12" ]]; then
+            docker manifest create $name:latest $tags:amd64 $tags:arm $tags:arm64
+            docker manifest annotate $name:latest $tags:arm --os linux --arch arm
+            docker manifest inspect $name:latest
+            docker manifest push $name:latest
+            docker manifest create $name:$date $tags:amd64 $tags:arm $tags:arm64
+            docker manifest annotate $name:$date $tags:arm --os linux --arch arm
+            docker manifest inspect $name:$date
+            docker manifest push $name:$date
+          fi
           echo "message=true" >> $GITHUB_OUTPUT
 
   message:
