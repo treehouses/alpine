@@ -53,6 +53,7 @@ jobs:
           echo "base sha:$basesha repo sha:$reposha"
           ${{ github.event.inputs.buildtype  == 'force' }} && echo "images=true" >> $GITHUB_OUTPUT || echo "no force" 
           [[ $reposha == *$basesha* ]] && echo "no changes" || echo "images=true" >> $GITHUB_OUTPUT
+
   images:
     needs: compare
     if: ${{ needs.compare.outputs.images }}
@@ -113,6 +114,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       message: ${{ steps.message.outputs.message }}
+    env:
+      name: "${{ matrix.registry }}/treehouses/alpine"
     steps:
       - name: container registries
         run: |
@@ -121,7 +124,7 @@ jobs:
       - name: create manifests
         id: message
         run: |
-          repo="${{ matrix.registry }}/treehouses/alpine"
+          repo=$name
           date="$(date +%Y%m%d%H%M)"
           docker manifest create $repo:latest $repo-tags:amd64 $repo-tags:arm $repo-tags:arm64
           docker manifest create $repo:$date $repo-tags:amd64 $repo-tags:arm $repo-tags:arm64
