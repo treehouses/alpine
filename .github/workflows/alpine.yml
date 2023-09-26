@@ -76,7 +76,7 @@ jobs:
           export DOCKER_CLI_EXPERIMENTAL=enabled
           tags="$name-tags"
           repo="$tags:${{ matrix.arch }}"
-          more="treehouses/alpine-tags:${{ matrix.arch }}-${{ matrix.version }}"
+          more="$repo-${{ matrix.version }}"
           case ${{ matrix.arch }} in
             amd64) : "amd64/alpine:${{ matrix.version }}" ;;
             arm) : "balenalib/raspberry-pi-alpine:${{ matrix.version }}" ;;
@@ -86,7 +86,7 @@ jobs:
           time=$(date +%Y%m%d%H%M)
           date="$repo-$time"
           full="$more-$time"
-          docker build -t $name --build-arg IMAGE=$base .
+          docker build -t $name --build-arg BASE=$base .
           #for compatilbity reasons
           if [[ "${{ matrix.version }}" == "3.12" ]]; then
             docker tag $name ghcr.io/$repo
