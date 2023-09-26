@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       buildtype:
-        description: 'Build by "force" or on "change"'
+        description: 'building by "force" or on "change"'
         required: true
         default: 'force'
   repository_dispatch:
