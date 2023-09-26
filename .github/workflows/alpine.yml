@@ -19,7 +19,7 @@ jobs:
   compare:
     runs-on: ubuntu-latest
     outputs:
-      flag: ${{ steps.set-flag.outputs.flag }}
+      images: ${{ steps.images.outputs.images }}
     strategy:
       fail-fast: false
       matrix:
@@ -32,7 +32,7 @@ jobs:
       - name: checkout repository
         uses: actions/checkout@v4
       - name: compare image
-        id: set-flag
+        id: images
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
           tags="$name-tags"
@@ -51,11 +51,13 @@ jobs:
           reposha=$(docker image inspect $repo | jq --raw-output '.[0].RootFS.Layers|.[]')
           #reposha=$(docker image inspect $more | jq --raw-output '.[0].RootFS.Layers|.[]')
           echo "base sha:$basesha repo sha:$reposha"
-          ${{ github.event.inputs.buildtype  == 'force' }} && echo "::set-output name=flag::true" || echo "building on change" 
-          [[ $reposha == *$basesha* ]] && echo "no changes" || echo "::set-output name=flag::true"
+          ${{ github.event.inputs.buildtype  == 'force' }} && echo "::set-output name=images::true" || echo "building on change" 
+          reposha="0"
+          [[ $reposha == *$basesha* ]] && echo "no changes" || echo "::set-output name=images::true"
 
   images:
     needs: compare
+    if: ${{ needs.compare.outputs.images }}
     runs-on: ubuntu-latest
     outputs:
       manifests: ${{ steps.manifests.outputs.manifests }}
@@ -75,7 +77,6 @@ jobs:
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
       - name: docker image
-        if: ${{ needs.compare.outputs.flag }}
         id: manifests
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
