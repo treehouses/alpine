@@ -139,7 +139,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: message chat of new image
-        if: ${{ env.message }}
+        if: env.message == 'true'
         run: |
           sudo npm install -g @treehouses/cli
           export discord_channel="${{ secrets.CHANNEL }}"
