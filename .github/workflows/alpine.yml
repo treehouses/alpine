@@ -144,6 +144,14 @@ jobs:
             docker manifest inspect $name:$date
             docker manifest push $name:$date
           fi
+          docker manifest create $name:${{ matrix.version }} $tags:amd64-${{ matrix.version }} $tags:arm-${{ matrix.version }} $tags:arm64-${{ matrix.version }}
+          docker manifest annotate $name:${{ matrix.version }} $tags:arm-${{ matrix.version }} --os linux --arch arm
+          docker manifest inspect $name:${{ matrix.version }}
+          docker manifest push $name:${{ matrix.version }}
+          docker manifest create $name:${{ matrix.version }}-$date $tags:amd64-${{ matrix.version }} $tags:arm-${{ matrix.version }} $tags:arm64-${{ matrix.version }}
+          docker manifest annotate $name:${{ matrix.version }}-$date $tags:arm-${{ matrix.version }} --os linux --arch arm
+          docker manifest inspect $name:${{ matrix.version }}-$date
+          docker manifest push $name:${{ matrix.version }}-$date
           echo "message=true" >> $GITHUB_OUTPUT
 
   message:
