@@ -131,14 +131,14 @@ jobs:
           docker manifest inspect $repo:latest
           docker manifest push $repo:latest
           docker manifest push $repo:$date
-          echo "send=true" >> $GITHUB_ENV
+          echo "message=true" >> $GITHUB_ENV
 
   message:
     needs: manifests
     runs-on: ubuntu-latest
     steps:
       - name: message chat of new image
-        if: ${{ needs.manifests.outputs.send }}
+        if: ${{ env.message }}
         run: |
           sudo npm install -g @treehouses/cli
           export discord_channel="${{ secrets.CHANNEL }}"
