@@ -136,10 +136,10 @@ jobs:
 
   message:
     needs: manifests
+    if: ${{ needs.manifests.outputs.message }}
     runs-on: ubuntu-latest
     steps:
       - name: message chat of new image
-        if: ${{ needs.manifests.outputs.message }}
         run: |
           sudo npm install -g @treehouses/cli
           export discord_channel="${{ secrets.CHANNEL }}"
