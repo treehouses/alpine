@@ -58,7 +58,7 @@ jobs:
     needs: compare
     runs-on: ubuntu-latest
     outputs:
-      build: ${{ steps.set-build.outputs.build }}
+      manifests: ${{ steps.manifests.outputs.manifests }}
     strategy:
       fail-fast: false
       matrix:
@@ -76,7 +76,7 @@ jobs:
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
       - name: docker image
         if: ${{ needs.compare.outputs.flag }}
-        id: set-build
+        id: manifests
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
           tags="$name-tags"
@@ -100,11 +100,11 @@ jobs:
           docker push --all-tags ghcr.io/$tags
           docker push --all-tags docker.io/$tags
           docker images
-          #echo "build=true" >> $GITHUB_ENV
-          echo "::set-output name=build::true"
+          echo "manifests=true" >> $GITHUB_OUTPUT
 
   manifests:
     needs: images
+    if: ${{ needs.images.outputs.manifests }}
     strategy:
       fail-fast: false
       matrix:
@@ -120,7 +120,6 @@ jobs:
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
       - name: create manifests
-        if: ${{ needs.images.outputs.build }}
         id: message
         run: |
           repo="${{ matrix.registry }}/treehouses/alpine"
