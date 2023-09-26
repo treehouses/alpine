@@ -100,6 +100,8 @@ jobs:
             docker tag $name docker.io/$date
           fi
           docker tag $name ghcr.io/$more
+          docker tag $name docker.io/$more
+          docker tag $name ghcr.io/$full
           docker tag $name docker.io/$full
           docker push --all-tags ghcr.io/$tags
           docker push --all-tags docker.io/$tags
