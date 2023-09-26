@@ -53,8 +53,7 @@ jobs:
           echo "base sha:$basesha repo sha:$reposha"
           ${{ github.event.inputs.buildtype  == 'force' }} && echo "::set-output name=images::true" || echo "building on change" 
           reposha="0"
-          [[ $reposha == *$basesha* ]] && echo "no changes" || echo "::set-output name=images::true"
-
+          [[ $reposha == *$basesha* ]] && echo "no changes" || echo "images=true" >> $GITHUB_OUTPUT
   images:
     needs: compare
     if: ${{ needs.compare.outputs.images }}
