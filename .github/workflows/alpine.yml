@@ -35,7 +35,7 @@ jobs:
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
           tags="$name-tags"
-          repo="$tags:${{ matrix.arch }}"-${{ matrix.version }}"
+          repo="$tags:${{ matrix.arch }}-${{ matrix.version }}"
           case ${{ matrix.arch }} in
             amd64) : "amd64/alpine:${{ matrix.version }}" ;;
             arm) : "balenalib/raspberry-pi-alpine:${{ matrix.version }}" ;;
