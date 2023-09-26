@@ -86,7 +86,7 @@ jobs:
           time=$(date +%Y%m%d%H%M)
           date="$repo-$time"
           full="$more-$time"
-          docker build -t $name --build-arg IMAGE=$base .
+          docker build -t $name --build-arg BASE=$base .
           #for compatilbity reasons
           if [[ "${{ matrix.version }}" == "3.12" ]]; then
             docker tag $name ghcr.io/$repo
