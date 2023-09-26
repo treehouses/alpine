@@ -51,7 +51,7 @@ jobs:
           reposha=$(docker image inspect $repo | jq --raw-output '.[0].RootFS.Layers|.[]')
           #reposha=$(docker image inspect $more | jq --raw-output '.[0].RootFS.Layers|.[]')
           echo "base sha:$basesha repo sha:$reposha"
-          ${{ github.event.inputs.buildtype  == 'force' }} && echo "::set-output name=images::true" || echo "not building by force" 
+          ${{ github.event.inputs.buildtype  == 'force' }} && echo "images=true" >> $GITHUB_OUTPUT || echo "no force" 
           [[ $reposha == *$basesha* ]] && echo "no changes" || echo "images=true" >> $GITHUB_OUTPUT
   images:
     needs: compare
