@@ -100,7 +100,8 @@ jobs:
           docker push --all-tags ghcr.io/$tags
           docker push --all-tags docker.io/$tags
           docker images
-          echo "build=true" >> $GITHUB_ENV
+          #echo "build=true" >> $GITHUB_ENV
+          echo "::set-output name=build::true"
 
   manifests:
     needs: images
