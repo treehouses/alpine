@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       buildtype:
-        description: 'Build by "force" or on "change"'
+        description: 'building by "force" or on "change"'
         required: true
         default: 'force'
   repository_dispatch:
@@ -19,28 +19,27 @@ jobs:
   compare:
     runs-on: ubuntu-latest
     outputs:
-      flag: ${{ steps.set-flag.outputs.flag }}
+      images: ${{ steps.images.outputs.images }}
     strategy:
       fail-fast: false
       matrix:
         arch: [amd64, arm, arm64]
+        version: [3.12, 3.14, 3.16, 3.18]
+    env:
+      name: "treehouses/alpine"
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
-      - name: container registries
-        run: |
-          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
-          docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
       - name: compare image
-        id: set-flag
+        id: images
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
-          version="3.12"
-          repo="treehouses/alpine-tags:${{ matrix.arch }}"
+          tags="$name-tags"
+          repo="$tags:${{ matrix.arch }}-${{ matrix.version }}"
           case ${{ matrix.arch }} in
-            amd64) : "amd64/alpine:$version" ;;
-            arm) : "balenalib/raspberry-pi-alpine:$version" ;;
-            arm64) : "arm64v8/alpine:$version" ;;
+            amd64) : "amd64/alpine:${{ matrix.version }}" ;;
+            arm) : "balenalib/raspberry-pi-alpine:${{ matrix.version }}" ;;
+            arm64) : "arm64v8/alpine:${{ matrix.version }}" ;;
           esac
           base="$_"
           docker pull -q $base &>/dev/null
@@ -48,18 +47,22 @@ jobs:
           basesha=$(docker image inspect $base | jq --raw-output '.[0].RootFS.Layers|.[]')
           reposha=$(docker image inspect $repo | jq --raw-output '.[0].RootFS.Layers|.[]')
           echo "base sha:$basesha repo sha:$reposha"
-          ${{ github.event.inputs.buildtype  == 'force' }} && echo "::set-output name=flag::true" || echo "building on change" 
-          [[ $reposha == *$basesha* ]] && echo "no changes" || echo "::set-output name=flag::true"
+          ${{ github.event.inputs.buildtype  == 'force' }} && echo "images=true" >> $GITHUB_OUTPUT || echo "no force" 
+          [[ $reposha == *$basesha* ]] && echo "no changes" || echo "images=true" >> $GITHUB_OUTPUT
 
   images:
     needs: compare
+    if: ${{ needs.compare.outputs.images }}
     runs-on: ubuntu-latest
     outputs:
-      build: ${{ steps.set-build.outputs.build }}
+      manifests: ${{ steps.manifests.outputs.manifests }}
     strategy:
       fail-fast: false
       matrix:
         arch: [amd64, arm, arm64]
+        version: [3.12, 3.14, 3.16, 3.18]
+    env:
+      name: "treehouses/alpine"
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
@@ -68,64 +71,89 @@ jobs:
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
       - name: docker image
-        if: ${{ needs.compare.outputs.flag }}
-        id: set-build
+        id: manifests
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
-          version="3.12"
+          tags="$name-tags"
+          repo="$tags:${{ matrix.arch }}"
+          more="treehouses/alpine-tags:${{ matrix.arch }}-${{ matrix.version }}"
           case ${{ matrix.arch }} in
-            amd64) : "amd64/alpine:$version" ;;
-            arm) : "balenalib/raspberry-pi-alpine:$version" ;;
-            arm64) : "arm64v8/alpine:$version" ;;
+            amd64) : "amd64/alpine:${{ matrix.version }}" ;;
+            arm) : "balenalib/raspberry-pi-alpine:${{ matrix.version }}" ;;
+            arm64) : "arm64v8/alpine:${{ matrix.version }}" ;;
           esac
-          image="$_"
-          repo="treehouses/alpine-tags"
-          dest="$repo:${{ matrix.arch }}"
-          date="$(date +%Y%m%d%H%M)"
-          docker build -t ghcr.io/$dest --build-arg IMAGE=$image .
-          docker tag ghcr.io/$dest docker.io/$dest
-          docker tag ghcr.io/$dest ghcr.io/$dest-$date
-          docker tag docker.io/$dest docker.io/$dest-$date
-          docker push --all-tags ghcr.io/$repo
-          docker push --all-tags docker.io/$repo
+          base="$_"
+          time=$(date +%Y%m%d%H%M)
+          date="$repo-$time"
+          full="$more-$time"
+          docker build -t $name --build-arg IMAGE=$base .
+          #for compatilbity reasons
+          if [[ "${{ matrix.version }}" == "3.12" ]]; then
+            docker tag $name ghcr.io/$repo
+            docker tag $name docker.io/repo
+            docker tag $name ghcr.io/$date
+            docker tag $name docker.io/$date
+          fi
+          docker tag $name ghcr.io/$more
+          docker tag $name docker.io/$more
+          docker tag $name ghcr.io/$full
+          docker tag $name docker.io/$full
+          docker push --all-tags ghcr.io/$tags
+          docker push --all-tags docker.io/$tags
           docker images
-          echo "::set-output name=build::true"
+          echo "manifests=true" >> $GITHUB_OUTPUT
 
   manifests:
     needs: images
+    if: ${{ needs.images.outputs.manifests }}
     strategy:
       fail-fast: false
       matrix:
         registry: [docker.io, ghcr.io]
+        version: [3.12, 3.14, 3.16, 3.18]
     runs-on: ubuntu-latest
     outputs:
-      send: ${{ steps.set-send.outputs.send }}
+      message: ${{ steps.message.outputs.message }}
+    env:
+      name: "${{ matrix.registry }}/treehouses/alpine"
     steps:
       - name: container registries
         run: |
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
       - name: create manifests
-        if: ${{ needs.images.outputs.build }}
-        id: set-send
+        id: message
         run: |
-          repo="${{ matrix.registry }}/treehouses/alpine"
+          export DOCKER_CLI_EXPERIMENTAL=enabled
+          tags="$name-tags"
           date="$(date +%Y%m%d%H%M)"
-          docker manifest create $repo:latest $repo-tags:amd64 $repo-tags:arm $repo-tags:arm64
-          docker manifest create $repo:$date $repo-tags:amd64 $repo-tags:arm $repo-tags:arm64
-          docker manifest annotate $repo:latest $repo-tags:arm --os linux --arch arm
-          docker manifest annotate $repo:$date $repo-tags:arm --os linux --arch arm
-          docker manifest inspect $repo:latest
-          docker manifest push $repo:latest
-          docker manifest push $repo:$date
-          echo "::set-output name=send::true"
+          #for compatilbity reasons
+          if [[ "${{ matrix.version }}" == "3.12" ]]; then
+            docker manifest create $name:latest $tags:amd64 $tags:arm $tags:arm64
+            docker manifest annotate $name:latest $tags:arm --os linux --arch arm
+            docker manifest inspect $name:latest
+            docker manifest push $name:latest
+            docker manifest create $name:$date $tags:amd64 $tags:arm $tags:arm64
+            docker manifest annotate $name:$date $tags:arm --os linux --arch arm
+            docker manifest inspect $name:$date
+            docker manifest push $name:$date
+          fi
+          docker manifest create $name:${{ matrix.version }} $tags:amd64-${{ matrix.version }} $tags:arm-${{ matrix.version }} $tags:arm64-${{ matrix.version }}
+          docker manifest annotate $name:${{ matrix.version }} $tags:arm-${{ matrix.version }} --os linux --arch arm
+          docker manifest inspect $name:${{ matrix.version }}
+          docker manifest push $name:${{ matrix.version }}
+          docker manifest create $name:${{ matrix.version }}-$date $tags:amd64-${{ matrix.version }} $tags:arm-${{ matrix.version }} $tags:arm64-${{ matrix.version }}
+          docker manifest annotate $name:${{ matrix.version }}-$date $tags:arm-${{ matrix.version }} --os linux --arch arm
+          docker manifest inspect $name:${{ matrix.version }}-$date
+          docker manifest push $name:${{ matrix.version }}-$date
+          echo "message=true" >> $GITHUB_OUTPUT
 
   message:
     needs: manifests
+    if: ${{ needs.manifests.outputs.message }}
     runs-on: ubuntu-latest
     steps:
       - name: message chat of new image
-        if: ${{ needs.manifests.outputs.send }}
         run: |
           sudo npm install -g @treehouses/cli
           export discord_channel="${{ secrets.CHANNEL }}"
