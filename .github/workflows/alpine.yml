@@ -37,7 +37,7 @@ jobs:
           export DOCKER_CLI_EXPERIMENTAL=enabled
           tags="$name-tags"
           repo="$tags:${{ matrix.arch }}"
-          #repo="treehouses/alpine-tags:${{ matrix.arch }}-${{ matrix.version }}"
+          more="treehouses/alpine-tags:${{ matrix.arch }}-${{ matrix.version }}"
           case ${{ matrix.arch }} in
             amd64) : "amd64/alpine:${{ matrix.version }}" ;;
             arm) : "balenalib/raspberry-pi-alpine:${{ matrix.version }}" ;;
@@ -46,8 +46,10 @@ jobs:
           base="$_"
           docker pull -q $base &>/dev/null
           docker pull -q $repo &>/dev/null
+          docker pull -q $more &>/dev/null
           basesha=$(docker image inspect $base | jq --raw-output '.[0].RootFS.Layers|.[]')
           reposha=$(docker image inspect $repo | jq --raw-output '.[0].RootFS.Layers|.[]')
+          #reposha=$(docker image inspect $more | jq --raw-output '.[0].RootFS.Layers|.[]')
           echo "base sha:$basesha repo sha:$reposha"
           ${{ github.event.inputs.buildtype  == 'force' }} && echo "::set-output name=flag::true" || echo "building on change" 
           [[ $reposha == *$basesha* ]] && echo "no changes" || echo "flag=true" >> $GITHUB_ENV
@@ -63,6 +65,8 @@ jobs:
         arch: [amd64, arm, arm64]
         #version: [3.12, 3.14, 3.16, 3.18]
         version: [3.12]
+    env:
+      name: "treehouses/alpine"
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
@@ -75,25 +79,26 @@ jobs:
         id: set-build
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
+          tags="$name-tags"
+          repo="$tags:${{ matrix.arch }}"
+          more="treehouses/alpine-tags:${{ matrix.arch }}-${{ matrix.version }}"
           case ${{ matrix.arch }} in
             amd64) : "amd64/alpine:${{ matrix.version }}" ;;
             arm) : "balenalib/raspberry-pi-alpine:${{ matrix.version }}" ;;
             arm64) : "arm64v8/alpine:${{ matrix.version }}" ;;
           esac
-          image="$_"
-          repo="treehouses/alpine-tags"
-          dest="$repo:${{ matrix.arch }}"
-          date="$(date +%Y%m%d%H%M)"
-          docker build -t alpine --build-arg IMAGE=$image .
+          base="$_"
+          date="$repo-$(date +%Y%m%d%H%M)"
+          docker build -t $name --build-arg IMAGE=$base .
           #for compatilbity reasons
           if [[ "${{ matrix.version }}" == "3.12" ]]; then
-            docker tag alpine ghcr.io/$dest
-            docker tag alpine docker.io/$dest
-            docker tag alpine ghcr.io/$dest-$date
-            docker tag alpine docker.io/$dest-$date
+            docker tag $name ghcr.io/$repo
+            docker tag $name docker.io/repo
+            docker tag $name ghcr.io/$date
+            docker tag $name docker.io/$date
           fi
-          docker push --all-tags ghcr.io/$repo
-          docker push --all-tags docker.io/$repo
+          docker push --all-tags ghcr.io/$tags
+          docker push --all-tags docker.io/$tags
           docker images
           echo "build=true" >> $GITHUB_ENV
 
