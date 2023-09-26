@@ -88,7 +88,9 @@ jobs:
             arm64) : "arm64v8/alpine:${{ matrix.version }}" ;;
           esac
           base="$_"
-          date="$repo-$(date +%Y%m%d%H%M)"
+          time=$(date +%Y%m%d%H%M)
+          date="$repo-$time"
+          full="$more-$time"
           docker build -t $name --build-arg IMAGE=$base .
           #for compatilbity reasons
           if [[ "${{ matrix.version }}" == "3.12" ]]; then
@@ -96,9 +98,9 @@ jobs:
             docker tag $name docker.io/repo
             docker tag $name ghcr.io/$date
             docker tag $name docker.io/$date
-            #docker push docker.io/$repo
-            docker push ghcr.io/$repo
           fi
+          docker tag $name ghcr.io/$more
+          docker tag $name docker.io/$full
           docker push --all-tags ghcr.io/$tags
           docker push --all-tags docker.io/$tags
           docker images
