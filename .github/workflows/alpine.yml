@@ -96,7 +96,7 @@ jobs:
             docker tag $name docker.io/repo
             docker tag $name ghcr.io/$date
             docker tag $name docker.io/$date
-            docker push docker.io/$repo
+            #docker push docker.io/$repo
             docker push ghcr.io/$repo
           fi
           docker push --all-tags ghcr.io/$tags
