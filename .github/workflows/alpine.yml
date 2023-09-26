@@ -24,8 +24,7 @@ jobs:
       fail-fast: false
       matrix:
         arch: [amd64, arm, arm64]
-        #version: [3.12, 3.14, 3.16, 3.18]
-        version: [3.12]
+        version: [3.12, 3.14, 3.16, 3.18]
     env:
       name: "treehouses/alpine"
     steps:
@@ -36,8 +35,7 @@ jobs:
         run: |
           export DOCKER_CLI_EXPERIMENTAL=enabled
           tags="$name-tags"
-          repo="$tags:${{ matrix.arch }}"
-          more="treehouses/alpine-tags:${{ matrix.arch }}-${{ matrix.version }}"
+          repo="$tags:${{ matrix.arch }}"-${{ matrix.version }}"
           case ${{ matrix.arch }} in
             amd64) : "amd64/alpine:${{ matrix.version }}" ;;
             arm) : "balenalib/raspberry-pi-alpine:${{ matrix.version }}" ;;
@@ -46,10 +44,8 @@ jobs:
           base="$_"
           docker pull -q $base &>/dev/null
           docker pull -q $repo &>/dev/null
-          #docker pull -q $more &>/dev/null
           basesha=$(docker image inspect $base | jq --raw-output '.[0].RootFS.Layers|.[]')
           reposha=$(docker image inspect $repo | jq --raw-output '.[0].RootFS.Layers|.[]')
-          #reposha=$(docker image inspect $more | jq --raw-output '.[0].RootFS.Layers|.[]')
           echo "base sha:$basesha repo sha:$reposha"
           ${{ github.event.inputs.buildtype  == 'force' }} && echo "images=true" >> $GITHUB_OUTPUT || echo "no force" 
           [[ $reposha == *$basesha* ]] && echo "no changes" || echo "images=true" >> $GITHUB_OUTPUT
