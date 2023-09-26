@@ -52,7 +52,7 @@ jobs:
           #reposha=$(docker image inspect $more | jq --raw-output '.[0].RootFS.Layers|.[]')
           echo "base sha:$basesha repo sha:$reposha"
           ${{ github.event.inputs.buildtype  == 'force' }} && echo "::set-output name=flag::true" || echo "building on change" 
-          [[ $reposha == *$basesha* ]] && echo "no changes" || echo "flag=true" >> $GITHUB_ENV
+          [[ $reposha == *$basesha* ]] && echo "no changes" || echo "::set-output name=flag::true"
 
   images:
     needs: compare
