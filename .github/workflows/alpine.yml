@@ -46,7 +46,7 @@ jobs:
           base="$_"
           docker pull -q $base &>/dev/null
           docker pull -q $repo &>/dev/null
-          docker pull -q $more &>/dev/null
+          #docker pull -q $more &>/dev/null
           basesha=$(docker image inspect $base | jq --raw-output '.[0].RootFS.Layers|.[]')
           reposha=$(docker image inspect $repo | jq --raw-output '.[0].RootFS.Layers|.[]')
           #reposha=$(docker image inspect $more | jq --raw-output '.[0].RootFS.Layers|.[]')
