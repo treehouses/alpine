@@ -113,7 +113,7 @@ jobs:
         version: [3.12]
     runs-on: ubuntu-latest
     outputs:
-      send: ${{ steps.set-send.outputs.send }}
+      message: ${{ steps.message.outputs.message }}
     steps:
       - name: container registries
         run: |
@@ -121,7 +121,7 @@ jobs:
           docker login docker.io -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
       - name: create manifests
         if: ${{ needs.images.outputs.build }}
-        id: set-send
+        id: message
         run: |
           repo="${{ matrix.registry }}/treehouses/alpine"
           date="$(date +%Y%m%d%H%M)"
@@ -132,14 +132,14 @@ jobs:
           docker manifest inspect $repo:latest
           docker manifest push $repo:latest
           docker manifest push $repo:$date
-          echo "message=true" >> $GITHUB_ENV
+          echo "message=true" >> $GITHUB_OUTPUT
 
   message:
     needs: manifests
     runs-on: ubuntu-latest
     steps:
       - name: message chat of new image
-        if: env.message == 'true'
+        if: ${{ needs.manifests.outputs.message }}
         run: |
           sudo npm install -g @treehouses/cli
           export discord_channel="${{ secrets.CHANNEL }}"
