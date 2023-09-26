@@ -98,7 +98,9 @@ jobs:
             docker tag $name docker.io/$date
           fi
           docker push --all-tags ghcr.io/$tags
+          docker push ghcr.io/$repo
           docker push --all-tags docker.io/$tags
+          docker push docker.io/$repo
           docker images
           echo "manifests=true" >> $GITHUB_OUTPUT
 
