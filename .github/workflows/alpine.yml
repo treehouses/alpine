@@ -24,7 +24,8 @@ jobs:
       fail-fast: false
       matrix:
         arch: [amd64, arm, arm64]
-        version: ["3.12", "3.14", "3.16", "3.18", "3.20"]
+        version: ["3.12", "3.14", "3.16", "3.18"]
+        #version: ["3.12", "3.14", "3.16", "3.18", "3.20"]
     env:
       name: "treehouses/alpine"
     steps:
@@ -60,7 +61,8 @@ jobs:
       fail-fast: false
       matrix:
         arch: [amd64, arm, arm64]
-        version: ["3.12", "3.14", "3.16", "3.18", "3.20"]
+        version: ["3.12", "3.14", "3.16", "3.18"]
+        #version: ["3.12", "3.14", "3.16", "3.18", "3.20"]
     env:
       name: "treehouses/alpine"
     steps:
@@ -110,7 +112,8 @@ jobs:
       fail-fast: false
       matrix:
         registry: [docker.io, ghcr.io]
-        version: ["3.12", "3.14", "3.16", "3.18", "3.20"]
+        version: ["3.12", "3.14", "3.16", "3.18"]
+        #version: ["3.12", "3.14", "3.16", "3.18", "3.20"]
     runs-on: ubuntu-latest
     outputs:
       message: ${{ steps.message.outputs.message }}
