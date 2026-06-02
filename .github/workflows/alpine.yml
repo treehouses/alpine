@@ -15,7 +15,6 @@ on:
     types: alpine
 
 jobs:
-
   compare:
     runs-on: ubuntu-latest
     outputs:
@@ -24,7 +23,6 @@ jobs:
       fail-fast: false
       matrix:
         arch: [amd64, arm, arm64]
-        #version: ["3.12", "3.14", "3.16", "3.18"]
         version: ["3.14", "3.16", "3.18", "3.20"]
     env:
       name: "treehouses/alpine"
@@ -43,19 +41,13 @@ jobs:
             arm64) : "arm64v8/alpine:${{ matrix.version }}" ;;
           esac
           base="$_"
-          echo 0
           docker pull -q --platform=linux/${{ matrix.arch }} $base &>/dev/null
-          echo 1
-          #docker pull -q --platform=linux/${{ matrix.arch }} $repo &>/dev/null
-          echo 2
+          docker pull -q --platform=linux/${{ matrix.arch }} $repo &>/dev/null
           basesha=$(docker image inspect --platform=linux/${{ matrix.arch }} $base | jq --raw-output '.[0].RootFS.Layers|.[]')
-          echo 3
-          #reposha=$(docker image inspect --platform=linux/${{ matrix.arch }} $repo | jq --raw-output '.[0].RootFS.Layers|.[]')
-          echo 4
+          reposha=$(docker image inspect --platform=linux/${{ matrix.arch }} $repo | jq --raw-output '.[0].RootFS.Layers|.[]')
           echo "base sha:$basesha repo sha:$reposha"
           ${{ github.event.inputs.buildtype  == 'force' }} && echo "images=true" >> $GITHUB_OUTPUT || echo "no force"
-          echo 5
-          #[[ $reposha == *$basesha* ]] && echo "no changes" || echo "images=true" >> $GITHUB_OUTPUT
+          [[ $reposha == *$basesha* ]] && echo "no changes" || echo "images=true" >> $GITHUB_OUTPUT
 
   images:
     needs: compare
