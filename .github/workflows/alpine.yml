@@ -23,7 +23,7 @@ jobs:
       fail-fast: false
       matrix:
         arch: [amd64, arm, arm64]
-        version: ["3.14", "3.16", "3.18", "3.20"]
+        version: ["3.14", "3.16", "3.18", "3.21"]
     env:
       name: "treehouses/alpine"
     steps:
@@ -42,12 +42,12 @@ jobs:
           esac
           base="$_"
           docker pull -q --platform=linux/${{ matrix.arch }} $base &>/dev/null
-          docker pull -q --platform=linux/${{ matrix.arch }} $repo &>/dev/null
+          #docker pull -q --platform=linux/${{ matrix.arch }} $repo &>/dev/null
           basesha=$(docker image inspect --platform=linux/${{ matrix.arch }} $base | jq --raw-output '.[0].RootFS.Layers|.[]')
-          reposha=$(docker image inspect --platform=linux/${{ matrix.arch }} $repo | jq --raw-output '.[0].RootFS.Layers|.[]')
+          #reposha=$(docker image inspect --platform=linux/${{ matrix.arch }} $repo | jq --raw-output '.[0].RootFS.Layers|.[]')
           echo "base sha:$basesha repo sha:$reposha"
           ${{ github.event.inputs.buildtype  == 'force' }} && echo "images=true" >> $GITHUB_OUTPUT || echo "no force"
-          [[ $reposha == *$basesha* ]] && echo "no changes" || echo "images=true" >> $GITHUB_OUTPUT
+          #[[ $reposha == *$basesha* ]] && echo "no changes" || echo "images=true" >> $GITHUB_OUTPUT
 
   images:
     needs: compare
@@ -59,7 +59,7 @@ jobs:
       fail-fast: false
       matrix:
         arch: [amd64, arm, arm64]
-        version: ["3.14", "3.16", "3.18", "3.20"]
+        version: ["3.14", "3.16", "3.18", "3.21"]
     env:
       name: "treehouses/alpine"
     steps:
@@ -109,7 +109,7 @@ jobs:
       fail-fast: false
       matrix:
         registry: [docker.io, ghcr.io]
-        version: ["3.14", "3.16", "3.18", "3.20"]
+        version: ["3.14", "3.16", "3.18", "3.21"]
     runs-on: ubuntu-latest
     outputs:
       message: ${{ steps.message.outputs.message }}
