@@ -43,12 +43,18 @@ jobs:
             arm64) : "arm64v8/alpine:${{ matrix.version }}" ;;
           esac
           base="$_"
+          echo 0
           docker pull -q --platform=linux/${{ matrix.arch }} $base &>/dev/null
+          echo 1
           docker pull -q --platform=linux/${{ matrix.arch }} $repo &>/dev/null
+          echo 2
           basesha=$(docker image inspect --platform=linux/${{ matrix.arch }} $base | jq --raw-output '.[0].RootFS.Layers|.[]')
+          echo 3
           reposha=$(docker image inspect --platform=linux/${{ matrix.arch }} $repo | jq --raw-output '.[0].RootFS.Layers|.[]')
+          echo 4
           echo "base sha:$basesha repo sha:$reposha"
-          ${{ github.event.inputs.buildtype  == 'force' }} && echo "images=true" >> $GITHUB_OUTPUT || echo "no force" 
+          ${{ github.event.inputs.buildtype  == 'force' }} && echo "images=true" >> $GITHUB_OUTPUT || echo "no force"
+          echo 5
           [[ $reposha == *$basesha* ]] && echo "no changes" || echo "images=true" >> $GITHUB_OUTPUT
 
   images:
